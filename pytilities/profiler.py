@@ -25,8 +25,8 @@ def run_time(
 
     Parameters
     ----------
-    func : `func`
-        Function object
+    func : `Callable`
+        Function object.
     """
 
     def wrapper(*args, **kwargs):

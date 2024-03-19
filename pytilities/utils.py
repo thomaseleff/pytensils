@@ -9,8 +9,7 @@ Revised on  : .
 
 Description
 ---------------------------------------------------------------------
-Contains utility functions for managing directories, data-types
-and decorators for timing functions.
+Contains utility functions for managing directories and data-types.
 """
 
 import os
@@ -24,7 +23,7 @@ def generate_output_directory(
     root: str,
     sub_folders: list | None = None
 ):
-    """ Recursively generates an output directory.
+    """ Generates an output directory with subfolders.
 
     Parameters
     ----------

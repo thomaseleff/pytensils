@@ -1,7 +1,7 @@
 """
 Information
 ---------------------------------------------------------------------
-Name        : test_utils.py
+Name        : test_config.py
 Location    : ~/tests
 Author      : Tom Eleff
 Published   : 2024-03-19
