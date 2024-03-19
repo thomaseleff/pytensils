@@ -13,7 +13,7 @@ Tests methods within `pytilities.profiler`.
 """
 
 import time
-from pytilities import profiler
+from pytensils import profiler
 
 
 # Profiler function(s)

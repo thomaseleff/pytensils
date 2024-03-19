@@ -14,7 +14,7 @@ Tests methods within `pytilities.utils`.
 
 import os
 import pytest
-from pytilities import utils
+from pytensils import utils
 
 
 # Directory management function(s)

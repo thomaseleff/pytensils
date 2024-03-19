@@ -14,7 +14,7 @@ Tests methods within `pytilities.config`.
 
 import os
 import pytest
-from pytilities import config
+from pytensils import config
 
 
 # Config management function(s)
