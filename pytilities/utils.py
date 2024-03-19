@@ -9,22 +9,22 @@ Revised on  : .
 
 Description
 ---------------------------------------------------------------------
-Contains utility functions for managing directories, data-types
-and decorators for timing functions.
+Contains utility functions for managing directories and data-types.
 """
 
 import os
 import ast
 import json
+from typing import Union
 
 
 # Directory management function(s)
 def generate_output_directory(
     path: str,
     root: str,
-    sub_folders: list | None = None
+    sub_folders: Union[list, None] = None
 ):
-    """ Recursively generates an output directory.
+    """ Generates an output directory with subfolders.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ def generate_output_directory(
 def as_type(
     value: str,
     return_dtype: str = 'str'
-) -> str | int | float | bool | list | dict:
+) -> Union[str, int, float, bool, list, dict]:
     """ Returns `value` as `return_dtype`.
 
     Parameters
