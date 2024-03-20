@@ -34,11 +34,17 @@ jobs:
 
     - name: Create coverage report
       run: |
+        mkdir coverage
         coverage run -m pytest tests/ --doctest-modules
         coverage report -m
+        coverage html -d coverage
 
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
+
+    - name: Move coverage badge
+      run: |
+        cp coverage.svg ./coverage
 
     - name: Verify coverage badge
       uses: tj-actions/verify-changed-files@v16
@@ -51,8 +57,8 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add coverage.svg
-        git commit -m "Updated coverage.svg"
+        git add coverage
+        git commit -m "Updated coverage"
 
     - name: Push coverage badge
       if: steps.verify-changed-files.outputs.files_changed == 'true'

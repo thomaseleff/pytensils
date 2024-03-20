@@ -2,8 +2,8 @@
 
 |         |                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------- |
-| Tests   | [![Unit-Tests](https://github.com/thomaseleff/pytensils/actions/workflows/unit-tests.yml/badge.svg?branch=main)](https://github.com/thomaseleff/pytensils/actions/workflows/unit-tests.yml) |
-| Package | [![PyPI latest release](https://img.shields.io/pypi/v/pytensils.svg)](https://pypi.org/project/pytensils/) [![License - MIT](https://img.shields.io/pypi/l/pytensils.svg)](https://github.com/thomaseleff/pytensils/blob/main/LICENSE) [![PyPI downloads](https://img.shields.io/pypi/dm/pytensils.svg?label=PyPI%20downloads)](https://pypi.org/project/pytensils/)  [![Supported versions](https://img.shields.io/pypi/pyversions/pytensils.svg?logo=python&logoColor=FBE072)](https://codecov.io/gh/thomaseleff/pytensils)  |
+| Tests   | [![Unit-Tests](https://github.com/thomaseleff/pytensils/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/thomaseleff/pytensils/actions/workflows/unit-tests.yml) [![Coverage](https://raw.githubusercontent.com/thomaseleff/pytensils/main/coverage.svg)]() |
+| Package | [![PyPI latest release](https://img.shields.io/pypi/v/pytensils.svg)](https://pypi.org/project/pytensils/) [![License - MIT](https://img.shields.io/pypi/l/pytensils.svg)](https://github.com/thomaseleff/pytensils/blob/main/LICENSE) [![PyPI downloads](https://img.shields.io/pypi/dm/pytensils.svg?label=PyPI%20downloads)](https://pypi.org/project/pytensils/)  [![Supported versions](https://img.shields.io/pypi/pyversions/pytensils.svg?logo=python&logoColor=FBE072)](https://pypi.org/project/pytensils/)  |
 
 `pytensils` is a Python package that provides general utility functions for managing configuration, directories and data-types as well as a basic run-time profiler.
 
