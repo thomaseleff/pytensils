@@ -42,7 +42,7 @@ jobs:
 
     - name: Move coverage reports
       run: |
-        cp coverage.svg ./coverage
+        mv coverage.svg ./coverage
 
     - name: Commit coverage badge
       run: |
