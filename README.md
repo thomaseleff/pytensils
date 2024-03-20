@@ -1,4 +1,10 @@
 # pytensils
+
+|         |                                                                                                      |
+| ------- | ---------------------------------------------------------------------------------------------------- |
+| Tests   | [![Unit Tests](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml/badge.svg)](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml) |
+| Package | [![PyPI Latest Release](https://img.shields.io/pypi/v/pytensils.svg)](https://pypi.org/project/pytensils/) [![License - MIT](https://img.shields.io/pypi/l/pytensils.svg)](https://github.com/thomaseleff/pytensils/blob/main/LICENSE) [![PyPI Downloads](https://img.shields.io/pypi/dm/pytensils.svg?label=PyPI%20downloads)](https://pypi.org/project/pytensils/) |
+
 `pytensils` is a Python package that provides general utility functions for managing configuration, directories and data-types as well as a basic run-time profiler.
 
 # Installation
