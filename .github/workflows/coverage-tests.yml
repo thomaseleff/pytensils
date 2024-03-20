@@ -42,17 +42,17 @@ jobs:
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
 
-    - name: Move coverage reports
-      run: |
-        cp coverage.svg ./coverage
-        cp ./coverage/index.html ./coverage/coverage.html
-        rm ./coverage/.gitignore
-
     - name: Verify coverage badge
       uses: tj-actions/verify-changed-files@v16
       id: verify-changed-files
       with:
         files: coverage.svg
+
+    - name: Move coverage reports
+      run: |
+        cp coverage.svg ./coverage
+        cp ./coverage/index.html ./coverage/coverage.html
+        rm ./coverage/.gitignore
 
     - name: Commit coverage badge
       if: steps.verify-changed-files.outputs.files_changed == 'true'
