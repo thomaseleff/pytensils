@@ -2,8 +2,8 @@
 
 |         |                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------- |
-| Tests   | [![Unit Tests](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml/badge.svg)](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml) |
-| Package | [![PyPI Latest Release](https://img.shields.io/pypi/v/pytensils.svg)](https://pypi.org/project/pytensils/) [![License - MIT](https://img.shields.io/pypi/l/pytensils.svg)](https://github.com/thomaseleff/pytensils/blob/main/LICENSE) [![PyPI Downloads](https://img.shields.io/pypi/dm/pytensils.svg?label=PyPI%20downloads)](https://pypi.org/project/pytensils/) |
+| Tests   | [![Unit-Tests](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml/badge.svg?branch=main)](https://github.com/thomaseleff/pytensils/actions/workflows/test-python-package.yml) |
+| Package | [![PyPI latest release](https://img.shields.io/pypi/v/pytensils.svg)](https://pypi.org/project/pytensils/) [![License - MIT](https://img.shields.io/pypi/l/pytensils.svg)](https://github.com/thomaseleff/pytensils/blob/main/LICENSE) [![PyPI downloads](https://img.shields.io/pypi/dm/pytensils.svg?label=PyPI%20downloads)](https://pypi.org/project/pytensils/)  [![Supported versions](https://img.shields.io/pypi/pyversions/pytensils.svg?logo=python&logoColor=FBE072)](https://codecov.io/gh/thomaseleff/pytensils)  |
 
 `pytensils` is a Python package that provides general utility functions for managing configuration, directories and data-types as well as a basic run-time profiler.
 
@@ -16,7 +16,7 @@ pip install pytensils
 ```
 
 # Documentation & examples
-An overview of all public `pytentils` objects, functions and methods exposed within the `pytensils.*` namespace.
+An overview of all public `pytensils` objects, functions and methods exposed within the `pytensils.*` namespace.
 
 - `.config` [Configuration-file management](#configuration-file-management)
 - `.utils` [General utilities](#general-utilities)
