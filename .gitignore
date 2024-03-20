@@ -4,5 +4,4 @@ __pycache__
 /archive
 .vscode
 .pytest_cache
-coverage.svg
 testing.py
