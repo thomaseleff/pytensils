@@ -42,11 +42,11 @@ jobs:
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
 
-    - name: Verify coverage badge
-      uses: tj-actions/verify-changed-files@v16
-      id: verify-changed-files
-      with:
-        files: coverage.svg
+    # - name: Verify coverage badge
+    #   uses: tj-actions/verify-changed-files@v16
+    #   id: verify-changed-files
+    #   with:
+    #     files: coverage.svg
 
     - name: Move coverage reports
       run: |
