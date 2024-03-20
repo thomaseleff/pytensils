@@ -42,9 +42,11 @@ jobs:
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
 
-    - name: Move coverage badge
+    - name: Move coverage reports
       run: |
         cp coverage.svg ./coverage
+        cp ./coverage/index.html ./coverage/coverage.html
+        rm ./coverage/.gitignore
 
     - name: Verify coverage badge
       uses: tj-actions/verify-changed-files@v16
@@ -57,7 +59,8 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add coverage
+        git add coverage/coverage.svg
+        git add coverage/coverage.html
         git commit -m "Updated coverage"
 
     - name: Push coverage badge
