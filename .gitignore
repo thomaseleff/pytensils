@@ -4,4 +4,5 @@ __pycache__
 /archive
 .vscode
 .pytest_cache
+.coverage
 testing.py

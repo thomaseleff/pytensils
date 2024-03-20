@@ -36,8 +36,7 @@ jobs:
       run: |
         mkdir coverage
         coverage run -m pytest tests/ --doctest-modules
-        coverage html -d coverage
-        coverage report -m
+        coverage report -m --format markdown > ./coverage/COVERAGE.md
 
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
@@ -51,15 +50,13 @@ jobs:
     - name: Move coverage reports
       run: |
         cp coverage.svg ./coverage
-        cp ./coverage/index.html ./coverage/coverage.html
-        rm ./coverage/.gitignore
 
     - name: Commit coverage badge
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add coverage/coverage.svg
-        git add coverage/coverage.html
+        git add coverage/COVERAGE.md
         git commit -m "Updated coverage"
 
     - name: Push coverage badge
