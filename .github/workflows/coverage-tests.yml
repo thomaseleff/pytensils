@@ -36,8 +36,8 @@ jobs:
       run: |
         mkdir coverage
         coverage run -m pytest tests/ --doctest-modules
-        coverage report -m
         coverage html -d coverage
+        coverage report -m
 
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
