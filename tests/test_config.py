@@ -5,11 +5,11 @@ Name        : test_config.py
 Location    : ~/tests
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : .
+Revised on  : 2024-03-21
 
 Description
 ---------------------------------------------------------------------
-Tests methods within `pytilities.config`.
+Tests methods within `pytensils.config`.
 """
 
 import os
@@ -184,3 +184,9 @@ def test_write_success(tmp_path):
             }
         }
     }
+
+
+def test_dictionary_depth():
+    assert config._return_dictionary_depth(
+        dict_object={'A': {'B': {'C': 'c'}}}
+    ) == 3

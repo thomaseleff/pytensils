@@ -5,11 +5,11 @@ Name        : test_profiler.py
 Location    : ~/tests
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : .
+Revised on  : 2024-03-21
 
 Description
 ---------------------------------------------------------------------
-Tests methods within `pytilities.profiler`.
+Tests methods within `pytensils.profiler`.
 """
 
 import time

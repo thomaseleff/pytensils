@@ -196,5 +196,5 @@ if __name__ == "__main__":
 ```
 Output
 ------
-> INFO: Function {wait_1_second()} executed in 00:00:01 hh:mm:ss
+> [INFO] Function {wait_1_second()} executed in 00:00:01 hh:mm:ss
 ```

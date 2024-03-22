@@ -5,7 +5,7 @@ Name        : config.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : .
+Revised on  : 2024-03-21
 
 Description
 ---------------------------------------------------------------------
@@ -215,3 +215,20 @@ def validate(
         )
     else:
         return True
+
+
+def _return_dictionary_depth(
+    dict_object: dict
+) -> int:
+    """ Returns the depth of a dictionary-object as an `int`
+
+    Parameters
+    ----------
+    dict_object : `dict`
+        Dictionary object to parse.
+    """
+    counter = 0
+    for i in str(dict_object):
+        if i == "{":
+            counter += 1
+    return counter
