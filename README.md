@@ -142,7 +142,7 @@ Config.write(
 ## User-logging
 `.logging` contains the `class` methods for writing 'pretty' user-logging as well as a decorator for catching and logging unhandled exceptions raised during the execution of functions. Access the [Source](https://github.com/thomaseleff/pytensils/blob/main/pytensils/logging.py) code via GitHub.
 
-Access an example user-log, [test.log](https://github.com/thomaseleff/pytensils/blob/v0.5.0/tests/resources/test.log), that show-cases `.logging` functionality via GitHub.
+Access an example user-log, [example.log](https://github.com/thomaseleff/pytensils/blob/v0.5.0/tests/resources/example.log), that show-cases `.logging` functionality via GitHub.
 
 ### Initialize an instance of the logging-handler
 The `logging.Handler(path: str, job_information: str, file_name: str = 'python.log', parameters: dict, create: bool, debug_console: bool )` constructor initializes an instance of the logging `class` and validates that `path` exists. The constructor also validates that `file_name` exists when `create=False`. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. 
