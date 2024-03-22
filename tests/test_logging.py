@@ -4,7 +4,7 @@ Information
 Name        : test_logging.py
 Location    : ~/tests
 Author      : Tom Eleff
-Published   : 2024-03-21
+Published   : 2024-03-22
 Revised on  : .
 
 Description
@@ -26,15 +26,15 @@ def test_logging_success():
         os.path.dirname(__file__),
         'resources'
     )
-    file_name = 'test.log'
+    file_name = 'example.log'
 
     # Initialize logging
     Logging = logging.Handler(
         path=path,
         file_name=file_name,
-        job_information=' '.join([
+        job_information=''.join([
             'Generates example user-log content for',
-            'all `pytenstils.logging` functionality.'
+            ' all `pytenstils.logging` functionality.'
         ]),
         parameters={
             'Extra parameter (1)': 1,
@@ -46,7 +46,7 @@ def test_logging_success():
 
     # Generate `str` test(s)
     Logging.write_header(
-        header='String Tests'
+        header='Examples: `str`'
     )
     Logging.write(
         content='This is a critical error string',
@@ -81,7 +81,7 @@ def test_logging_success():
 
     # Generate `list` test(s)
     Logging.write_header(
-        header='List Tests',
+        header='Examples: `list`',
         divider=True
     )
     Logging.write(
@@ -100,7 +100,7 @@ def test_logging_success():
 
     # Generate `dict` test(s)
     Logging.write_header(
-        header='Dictionary Tests',
+        header='Examples: `dict`',
         divider=True
     )
     Logging.write(
@@ -119,7 +119,7 @@ def test_logging_success():
 
     # Generate `pd.DataFrame` test(s)
     Logging.write_header(
-        header='Dataframe Tests',
+        header='Examples: `pd.DataFrame`',
         divider=True
     )
     Logging.write(
@@ -172,10 +172,6 @@ def test_init_oserror():
         # Initialize logging
         _ = logging.Handler(
             path=path,
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
         )
 
 
@@ -192,10 +188,6 @@ def test_init_filenotfounderror():
         _ = logging.Handler(
             path=path,
             file_name='file-not-found.log',
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
             create=False
         )
 
@@ -212,10 +204,6 @@ def test_write_header_valueerror():
         # Initialize logging
         Logging = logging.Handler(
             path=path,
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
             create=True
         )
 
@@ -224,8 +212,8 @@ def test_write_header_valueerror():
         )
 
 
-def test_write_header_nameerror():
-    with pytest.raises(NameError):
+def test_write_header_typeerror():
+    with pytest.raises(TypeError):
 
         # Set up logging parameters
         path = os.path.join(
@@ -236,10 +224,6 @@ def test_write_header_nameerror():
         # Initialize logging
         Logging = logging.Handler(
             path=path,
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
             create=True
         )
 
@@ -248,8 +232,8 @@ def test_write_header_nameerror():
         )
 
 
-def test_write_nameerror():
-    with pytest.raises(NameError):
+def test_write_typeerror():
+    with pytest.raises(TypeError):
 
         # Set up logging parameters
         path = os.path.join(
@@ -260,10 +244,6 @@ def test_write_nameerror():
         # Initialize logging
         Logging = logging.Handler(
             path=path,
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
             create=True
         )
 
@@ -284,15 +264,22 @@ def test_debug_console(caplog):
     # Initialize logging
     Logging = logging.Handler(
         path=path,
-        job_information=' '.join([
-            'Generates example user-log content for',
-            'all `pytenstils.logging` functionality.'
-        ]),
         create=True,
         debug_console=True
     )
 
+    # Create debug console output
     Logging.write(content='Log-content-for-the-output-console')
+
+    # Cleanup
+    os.remove(
+        os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'python.log'
+        )
+    )
+
     assert 'Log-content-for-the-output-console' in caplog.text
 
 
@@ -308,11 +295,16 @@ def test_pretty_dict_valueerror():
         # Initialize logging
         Logging = logging.Handler(
             path=path,
-            job_information=' '.join([
-                'Generates example user-log content for',
-                'all `pytenstils.logging` functionality.'
-            ]),
             create=True
+        )
+
+        # Cleanup
+        os.remove(
+            os.path.join(
+                os.path.dirname(__file__),
+                'resources',
+                'python.log'
+            )
         )
 
         _ = Logging._pretty_dict(dict_object={'A': {'B': {'C': 'c'}}})
@@ -334,9 +326,10 @@ def test_logging_close_on_exception_success():
     # Initialize logging
     Logging = logging.Handler(
         path=path,
-        job_information=' '.join([
+        file_name='closes-on-exception-success.log',
+        job_information=''.join([
             'Generates close-on-exception content for',
-            '`pytenstils.logging` functionality.'
+            ' `pytenstils.logging` functionality.'
         ]),
         create=True,
         debug_console=False
@@ -360,15 +353,14 @@ def test_logging_close_on_exception_zerodivisionerror():
             os.path.dirname(__file__),
             'resources'
         )
-        file_name = 'closes-on-exception.log'
 
         # Initialize logging
         Logging = logging.Handler(
             path=path,
-            file_name=file_name,
-            job_information=' '.join([
+            file_name='closes-on-exception.log',
+            job_information=''.join([
                 'Generates close-on-exception content for',
-                '`pytenstils.logging` functionality.'
+                ' `pytenstils.logging` functionality.'
             ]),
             create=True,
             debug_console=False

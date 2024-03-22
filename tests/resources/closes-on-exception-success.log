@@ -4,7 +4,7 @@
     Generates close-on-exception content for `pytenstils.logging`
         functionality.
     
-        Start time    : 2024-03-22 01:35:22
+        Start time    : 2024-03-22 13:59:15
     
     --------------------------------------------------------------------------
     
@@ -13,8 +13,8 @@
     
     Run-time performance summary.
     
-        Start time    : 01:35:22.098505
-        End time      : 01:35:22.183973
-        Run time      : 00:00:00.085468
+        Start time    : 13:59:15.781908
+        End time      : 13:59:15.866933
+        Run time      : 00:00:00.085025
 
     --------------------------------------------------------------------------

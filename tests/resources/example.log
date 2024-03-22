@@ -4,14 +4,14 @@
     Generates example user-log content for all `pytenstils.logging`
         functionality.
     
-        Start time             : 2024-03-22 01:35:20
+        Start time             : 2024-03-22 13:59:14
         Extra parameter (1)    : 1
         Extra parameter (2)    : 2
     
     --------------------------------------------------------------------------
     
-    String Tests
-    ------------
+    Examples: `str`
+    ---------------
     
 *** CRITICAL: This is a critical error string
 *** ERROR: This is an error string that exceeds the line-length limit set for
@@ -24,8 +24,8 @@
     
     --------------------------------------------------------------------------
     
-    List Tests
-    ----------
+    Examples: `list`
+    ----------------
     
     This is a list output.
     
@@ -38,7 +38,7 @@
     
     --------------------------------------------------------------------------
     
-    Dictionary Tests
+    Examples: `dict`
     ----------------
     
     This is a dictionary output.
@@ -52,8 +52,8 @@
     
     --------------------------------------------------------------------------
     
-    Dataframe Tests
-    ---------------
+    Examples: `pd.DataFrame`
+    ------------------------
     
     This is a dataframe output.
     
@@ -70,8 +70,8 @@
     
     Run-time performance summary.
     
-        Start time    : 01:35:20.922761
-        End time      : 01:35:21.735558
-        Run time      : 00:00:00.812797
+        Start time    : 13:59:14.853177
+        End time      : 13:59:15.434343
+        Run time      : 00:00:00.581166
 
     --------------------------------------------------------------------------

@@ -10,8 +10,8 @@
     
     --------------------------------------------------------------------------
     
-    String Tests
-    ------------
+    Examples: `str`
+    ---------------
     
 *** CRITICAL: This is a critical error string
 *** ERROR: This is an error string that exceeds the line-length limit set for
@@ -24,8 +24,8 @@
     
     --------------------------------------------------------------------------
     
-    List Tests
-    ----------
+    Examples: `list`
+    ----------------
     
     This is a list output.
     
@@ -38,7 +38,7 @@
     
     --------------------------------------------------------------------------
     
-    Dictionary Tests
+    Examples: `dict`
     ----------------
     
     This is a dictionary output.
@@ -52,8 +52,8 @@
     
     --------------------------------------------------------------------------
     
-    Dataframe Tests
-    ---------------
+    Examples: `pd.DataFrame`
+    ------------------------
     
     This is a dataframe output.
     

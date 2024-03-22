@@ -4,12 +4,12 @@ Information
 Name        : logging.py
 Location    : ~/
 Author      : Tom Eleff
-Published   : 2024-03-21
+Published   : 2024-03-22
 Revised on  : .
 
 Description
 ---------------------------------------------------------------------
-Contains the `class` methods for managing 'pretty' user-logging.
+Contains the `class` methods for creating 'pretty' user-logging.
 """
 
 import os
@@ -43,8 +43,8 @@ class Handler():
     def __init__(
         self,
         path: str,
-        job_information: str,
         file_name: str = 'python.log',
+        job_information: str = 'Environment information summary.',
         parameters: dict = {},
         create: bool = True,
         debug_console: bool = False
@@ -173,7 +173,7 @@ class Handler():
                     )
 
             else:
-                raise NameError(
+                raise TypeError(
                     'Invalid header datatype {%s}.' % (
                         type(header).__name__
                     )
@@ -250,7 +250,7 @@ class Handler():
                 )
 
             else:
-                raise NameError(
+                raise TypeError(
                     'Invalid content datatype {%s}.' % (
                         type(content).__name__
                     )
