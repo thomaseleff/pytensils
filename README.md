@@ -27,12 +27,12 @@ An overview of all public `pytensils` objects, functions and methods exposed wit
 `.config` contains the `class` methods for reading, writing and validating `.json` format configuration-files. Access the [Source](https://github.com/thomaseleff/pytensils/blob/main/pytensils/config.py) code via GitHub.
 
 ### Initialize an instance of the config-handler
-The `config.Handler(path: str, file_name: str, create: bool, Logging: pytensils.logging.Handler)` constructor initializes an instance of the config `class` and validates that `path` and `file_name` exist. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. Should the content not be able to be parsed as `json`, the constructor raises a `TypeError`.
+The `config.Handler(path: str, file_name: str, create: bool = False, Logging: pytensils.logging.Handler | None = None)` constructor initializes an instance of the config `class` and validates that `path` and `file_name` exist. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. Should the content not be able to be parsed as `json`, the constructor raises a `TypeError`.
 
  **Advanced parameters**
 
-- The parameter `create` can be set to `False` to initialize an instance of the `class` without reading config-data from `/path/file_name`. The `create` parameter is useful in order to generate the configuration-file via Python.
-- The parameter `Logging` can be set to an instance of the `pytensils.logging.Handler` `class` to enable pretty user-logging for config-related read, write and validation errors natively
+- The parameter `create` can be set to `False` to initialize an instance of the `class` without reading config-data from `/path/file_name`. The `create` parameter is useful in order to generate the configuration-file via the Python process.
+- The parameter `Logging` can be set to an instance of the `pytensils.logging.Handler` `class` to enable pretty user-logging for config-related read, write and validation errors natively.
 
 ``` python
 import os
@@ -40,7 +40,7 @@ from pytensils import config
 
 """
     Assume there is a file, named './config.json' within the same folder
-    as the executed Python program with the following contents,
+    as the executed Python process with the following contents,
 
         {
             "config": {
@@ -62,7 +62,7 @@ Config = config.Handler(
 ```
 
 ### Access or re-load the configuration-file data
-The configuration-file data can be accessed via a `class` variable, `.data`, returned as a copy as a dictionary, `.to_dict()`, or read directly from the source `.json` config-file, `.read()`.
+The configuration-file data can be accessed via a `class` variable, `.data`, returned as a copy as a dictionary, `.to_dict()`, or read directly from the source `.json` file, `.read()`.
 
 ``` python
 import os
@@ -92,7 +92,7 @@ The `.validate(dtypes: dict)` function validates that the structure of `config` 
 import os
 from pytensils import config
 
-# Static config structure and type dictionary
+# Dictionary of expected data-types
 dtype_dict_object = {
     "config": {
         "str": "str",
@@ -151,7 +151,7 @@ Config.from_dict(
 ## User-logging
 `.logging` contains the `class` methods for writing 'pretty' user-logging as well as a decorator for catching and logging unhandled exceptions raised during the execution of functions. Access the [Source](https://github.com/thomaseleff/pytensils/blob/main/pytensils/logging.py) code via GitHub.
 
-Access an example user-log, [example.log](https://github.com/thomaseleff/pytensils/blob/v0.5.0/tests/resources/example.log), that show-cases `.logging` functionality via GitHub.
+Access an example user-log, [example.log](https://github.com/thomaseleff/pytensils/blob/main/tests/resources/example.log), that show-cases `.logging` functionality via GitHub.
 
 ### Set-up logging
 The `logging` library contains various static control variables that can be configured for all instances of the `logging.Handler` within a single Python session.
@@ -170,11 +170,12 @@ logging.TIME_ZONE = 'America/Chicago'
 ```
 
 ### Initialize an instance of the logging-handler
-The `logging.Handler(path: str, file_name: str = 'python.log', description: str = 'Environment information summary.', metadata: dict, create: bool, debug_console: bool )` constructor initializes an instance of the logging `class` and validates that `path` exists. The constructor also validates that `file_name` exists when `create=False`. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`.
+The `logging.Handler(path: str, file_name: str = 'python.log', description: str = 'Environment information summary.', metadata: dict, create: bool = True, debug_console: bool = False)` constructor initializes an instance of the logging `class` and validates that `path` exists. The constructor also validates that `file_name` exists when `create=False`. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`.
 
 **Advanced parameters**
 
 - The parameter `create` can be set to `False` to initialize an instance of the `class` without creating the `.log` file. The `create` parameter is useful so that multiple Python processes can write to the same user-log without overwriting the `.log` file.
+- The parameter `debug_console` can be set to `True` to force outputting all content to the output console, in addition to the user-log.
 
 ``` python
 import os
@@ -226,7 +227,7 @@ User-log content
 ```
 
 ### Write a status message to the user-log
-The `.write(content: str | list | dict | pd.DataFrame, level: str)` method writes a pretty-styled content object to the user-log. The function supports content objects of type `str`, `list`, `dict` and `pd.DataFrame`. Should the header not be of any of the allowed types then the function raises a `TypeError`.
+The `.write(content: str | list | dict | pd.DataFrame, level: str)` method writes a pretty-styled content object to the user-log. The function supports content objects of type `str`, `list`, `dict` and `pd.DataFrame`. Should the content not be of any of the allowed types then the function raises a `TypeError`.
 
 ``` python
 import os
