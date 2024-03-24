@@ -4,12 +4,12 @@ Information
 Name        : logging.py
 Location    : ~/
 Author      : Tom Eleff
-Published   : 2024-03-22
+Published   : 2024-03-24
 Revised on  : .
 
 Description
 ---------------------------------------------------------------------
-Contains the `class` methods for creating 'pretty' user-logging.
+Contains the `class` methods for 'pretty' user-logging.
 """
 
 import os
@@ -21,12 +21,14 @@ import pytz
 import logging as clogging
 import pandas as pd
 from typing import Union, Callable
-from pytensils import config
 
 # Static variable(s)
 INDENT = 4
 LINE_LENGTH = 79
 TIMEZONE = 'America/New_York'
+
+# Private static variable(s)
+_MAX_DEPTH = 1
 
 # Setup CPython logging
 clogging.basicConfig(
@@ -44,8 +46,8 @@ class Handler():
         self,
         path: str,
         file_name: str = 'python.log',
-        job_information: str = 'Environment information summary.',
-        parameters: dict = {},
+        description: str = 'Environment information summary.',
+        metadata: dict = {},
         create: bool = True,
         debug_console: bool = False
     ):
@@ -58,6 +60,11 @@ class Handler():
                 log-file.
         file_name : `str`
             File name of the log-file.
+        description : `str`
+            Information about the executed Python job run.
+        metadata : `str`
+            Environment parameters to display as metadata about the executed
+                Python job run.
         create: `bool`
             `True` or `False`, creates an empty log-file, `file_name`
                 within `path` when `True`.
@@ -70,13 +77,16 @@ class Handler():
         self.path = path
         self.file_name = file_name
         self.debug_console = debug_console
-        self.start_time = dt.datetime.now(tz=pytz.timezone(TIMEZONE))
+
+        # Assign private class variables
+        self._INDENT = INDENT
+        self._LINE_LENGTH = LINE_LENGTH
+        self._TIMEZONE = TIMEZONE
+        self._START_TIME = dt.datetime.now(tz=pytz.timezone(TIMEZONE))
 
         # Validate the file-path
         if not os.path.isdir(path):
-            raise OSError(
-                '{~/%s} does not exist.' % (path)
-            )
+            raise OSError('{%s} does not exist.' % (path))
 
         # Create the file-name
         if create:
@@ -96,30 +106,32 @@ class Handler():
                 divider=False
             )
 
-            # Write parameters
-            if parameters:
-                tuples = [(k, v) for k, v in parameters.items()]
+            # Write metadata
+            if metadata:
+                tuples = [(k, v) for k, v in metadata.items()]
                 tuples.insert(
                     0,
                     (
                         'Start time',
-                        self.start_time.strftime('%Y-%m-%d %H:%M:%S')
+                        self._START_TIME.strftime('%Y-%m-%d %H:%M:%S')
                     )
                 )
-                parameters = dict(tuples)
+                metadata = dict(tuples)
             else:
-                parameters = {
-                    'Start time': self.start_time.strftime('%Y-%m-%d %H:%M:%S')
+                metadata = {
+                    'Start time': (
+                        self._START_TIME.strftime('%Y-%m-%d %H:%M:%S')
+                    )
                 }
 
             # Write job-information
             self.write(
-                content=job_information
+                content=description
             )
 
             # Write parameters
             self.write(
-                content=parameters
+                content=metadata
             )
 
         # Validate the file-name
@@ -128,7 +140,7 @@ class Handler():
                 os.path.join(path, file_name)
             ):
                 raise FileNotFoundError(
-                    '{%s} does not exist within {~/%s}.' % (
+                    '{%s} does not exist within {%s}.' % (
                         file_name,
                         path
                     )
@@ -155,7 +167,7 @@ class Handler():
             if isinstance(header, str):
 
                 # Validate header
-                if not len(header) > (LINE_LENGTH-INDENT):
+                if not len(header) > (self._LINE_LENGTH-self._INDENT):
                     log.write(
                         self._pretty_header(
                             header=header,
@@ -167,7 +179,7 @@ class Handler():
                         ''.join([
                             'The header value exceeds the',
                             ' maximum line length {%s}.' % (
-                                LINE_LENGTH-INDENT
+                                self._LINE_LENGTH-self._INDENT
                             )
                         ])
                     )
@@ -277,16 +289,16 @@ class Handler():
         end_time = dt.datetime.now(tz=pytz.timezone(TIMEZONE))
         self.write(
             content={
-                'Start time': self.start_time.strftime('%H:%M:%S.%f'),
+                'Start time': self._START_TIME.strftime('%H:%M:%S.%f'),
                 'End time': end_time.strftime('%H:%M:%S.%f'),
-                'Run time': str(end_time-self.start_time).zfill(15),
+                'Run time': str(end_time-self._START_TIME).zfill(15),
             }
         )
 
         # Write final divider
         self.write(content='')
         self.write(
-            content=''.join(['-'*(LINE_LENGTH-INDENT-1), '\n'])
+            content=''.join(['-'*(self._LINE_LENGTH-self._INDENT-1), '\n'])
         )
 
     def close_on_exception(
@@ -318,7 +330,7 @@ class Handler():
                 self.write(content='')
                 self.write(
                     content=''.join([
-                        '>'*(INDENT-1),
+                        '>'*(self._INDENT-1),
                         ' ',
                         type(e).__name__,
                         ': ',
@@ -361,7 +373,7 @@ class Handler():
                         string=''
                     ),
                     self._pretty_str(
-                        string='-'*(LINE_LENGTH-INDENT-1)
+                        string='-'*(self._LINE_LENGTH-self._INDENT-1)
                     ),
                     self._pretty_str(
                         string=''
@@ -427,8 +439,8 @@ class Handler():
         if wrap:
             strings = textwrap.wrap(
                 text=string,
-                width=LINE_LENGTH-INDENT-1,
-                subsequent_indent=' '*INDENT
+                width=self._LINE_LENGTH-self._INDENT-1,
+                subsequent_indent=' '*self._INDENT
             )
         else:
             strings = [string]
@@ -438,19 +450,19 @@ class Handler():
             string = '\n'.join(
                 [
                     ''.join(
-                        ['*'*(INDENT-1), ' ', string]
+                        ['*'*(self._INDENT-1), ' ', string]
                     ) for string in strings[0:1]
                 ]
                 + [
                     ''.join(
-                        [' '*INDENT, string]
+                        [' '*self._INDENT, string]
                     ) for string in strings[1:]
                 ]
             )
         else:
             string = '\n'.join(
                 [''.join(
-                    [' '*INDENT, string]
+                    [' '*self._INDENT, string]
                 ) for string in strings]
             )
 
@@ -482,14 +494,14 @@ class Handler():
             + [
                 self._pretty_str(
                     string=''.join([
-                        ' '*INDENT,
+                        ' '*self._INDENT,
                         '- ',
                         textwrap.shorten(
                             text=str(item),
                             width=(
-                                LINE_LENGTH
-                                - INDENT
-                                - INDENT
+                                self._LINE_LENGTH
+                                - self._INDENT
+                                - self._INDENT
                                 - 3
                             ),
                             break_long_words=True
@@ -512,7 +524,7 @@ class Handler():
         """
 
         # Prettify dictionary
-        if config._return_dictionary_depth(dict_object=dict_object) == 1:
+        if self._validate_depth(dict_object=dict_object):
 
             # Retain the maximum key length
             max_key_length = max([len(i) for i in list(dict_object.keys())])
@@ -526,18 +538,18 @@ class Handler():
                 + [
                     self._pretty_str(
                         string=''.join([
-                            ' '*INDENT,
+                            ' '*self._INDENT,
                             key,
-                            ' '*(max_key_length-len(key)+INDENT),
+                            ' '*(max_key_length-len(key)+self._INDENT),
                             ': ',
                             textwrap.shorten(
                                 str(dict_object[key]),
                                 width=(
-                                    LINE_LENGTH
-                                    - INDENT
-                                    - INDENT
+                                    self._LINE_LENGTH
+                                    - self._INDENT
+                                    - self._INDENT
                                     - max_key_length
-                                    - INDENT
+                                    - self._INDENT
                                     - 3
                                 ),
                                 break_long_words=True
@@ -573,7 +585,7 @@ class Handler():
             + [
                 self._pretty_str(
                     string=''.join([
-                        ' '*INDENT,
+                        ' '*self._INDENT,
                         line
                     ])
                 ) for line in tabulate.tabulate(
@@ -586,6 +598,24 @@ class Handler():
                 ).split('\n')
             ]
         )
+
+    def _validate_depth(
+        self,
+        dict_object: dict
+    ) -> bool:
+        """ Validates the depth of `dict_object`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to validate.
+        """
+        if _return_dictionary_depth(
+            dict_object=dict_object
+        ) == _MAX_DEPTH:
+            return True
+        else:
+            return False
 
 
 def _validate_level(level: str):
@@ -634,3 +664,20 @@ def _return_level_substring(level: str):
         return ''
     else:
         return '%s: ' % (level)
+
+
+def _return_dictionary_depth(
+    dict_object: dict
+) -> int:
+    """ Returns the depth of a dictionary-object as an `int`.
+
+    Parameters
+    ----------
+    dict_object : `dict`
+        Dictionary object to parse.
+    """
+    counter = 0
+    for i in str(dict_object):
+        if i == "{":
+            counter += 1
+    return counter

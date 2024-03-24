@@ -5,7 +5,7 @@ Name        : test_utils.py
 Location    : ~/tests
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : 2024-03-21
+Revised on  : 2024-03-24
 
 Description
 ---------------------------------------------------------------------
@@ -17,7 +17,6 @@ import pytest
 from pytensils import utils
 
 
-# Directory management function(s)
 def test_generate_output_directory_success(tmp_path):
     utils.generate_output_directory(
         path=tmp_path,
@@ -40,7 +39,6 @@ def test_generate_output_directory_oserror():
         )
 
 
-# Data-type parsing function(s)
 def test_as_type_success_str():
     assert utils.as_type(value='ABC') == 'ABC'
 

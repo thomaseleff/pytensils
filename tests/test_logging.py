@@ -4,7 +4,7 @@ Information
 Name        : test_logging.py
 Location    : ~/tests
 Author      : Tom Eleff
-Published   : 2024-03-22
+Published   : 2024-03-24
 Revised on  : .
 
 Description
@@ -18,25 +18,22 @@ import logging as clogging
 import pytest
 from pytensils import logging
 
+PATH = os.path.join(
+    os.path.dirname(__file__),
+    'resources'
+)
 
-def test_logging_success():
 
-    # Set up logging parameters
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'resources'
-    )
-    file_name = 'example.log'
-
-    # Initialize logging
-    Logging = logging.Handler(
-        path=path,
-        file_name=file_name,
-        job_information=''.join([
+@pytest.fixture
+def LOGGING_FIXTURE():
+    return logging.Handler(
+        path=PATH,
+        file_name='example.log',
+        description=''.join([
             'Generates example user-log content for',
             ' all `pytenstils.logging` functionality.'
         ]),
-        parameters={
+        metadata={
             'Extra parameter (1)': 1,
             'Extra parameter (2)': 2
         },
@@ -44,30 +41,33 @@ def test_logging_success():
         debug_console=False
     )
 
+
+def test_logging_success(LOGGING_FIXTURE: logging.Handler):
+
     # Generate `str` test(s)
-    Logging.write_header(
+    LOGGING_FIXTURE.write_header(
         header='Examples: `str`'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a critical error string',
         level='CRITICAL'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content=''.join([
             'This is an error string that exceeds the',
             ' line-length limit set for the log-file.'
         ]),
         level='ERROR'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a warning string.',
         level='WARNING'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a debug string.',
         level='DEBUG'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content=''.join([
             'This is a boring short story.'
             ' The quick brown fox jumped over the lazy dog.'
@@ -75,19 +75,19 @@ def test_logging_success():
         ]),
         level='INFO'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is an unset string.'
     )
 
     # Generate `list` test(s)
-    Logging.write_header(
+    LOGGING_FIXTURE.write_header(
         header='Examples: `list`',
         divider=True
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a list output.'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content=[
             ' '.join(str(i) for i in list(range(52))),
             ['A', 'B', 'C'],
@@ -99,14 +99,14 @@ def test_logging_success():
     )
 
     # Generate `dict` test(s)
-    Logging.write_header(
+    LOGGING_FIXTURE.write_header(
         header='Examples: `dict`',
         divider=True
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a dictionary output.'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content={
             'A': 'a',
             'B': 'b',
@@ -118,14 +118,14 @@ def test_logging_success():
     )
 
     # Generate `pd.DataFrame` test(s)
-    Logging.write_header(
+    LOGGING_FIXTURE.write_header(
         header='Examples: `pd.DataFrame`',
         divider=True
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content='This is a dataframe output.'
     )
-    Logging.write(
+    LOGGING_FIXTURE.write(
         content=pd.DataFrame(
             {
                 "Calories": [420, 380, 390],
@@ -136,11 +136,11 @@ def test_logging_success():
     )
 
     # Close
-    Logging.close()
+    LOGGING_FIXTURE.close()
 
     # Iterate and compare logs
-    test = open(os.path.join(path, file_name), 'r')
-    compare = open(os.path.join(path, 'compare.log'), 'r')
+    test = open(os.path.join(PATH, 'example.log'), 'r')
+    compare = open(os.path.join(PATH, 'compare.log'), 'r')
 
     test_lines = test.readlines()
     compare_lines = compare.readlines()
@@ -162,31 +162,18 @@ def test_logging_success():
 
 def test_init_oserror():
     with pytest.raises(OSError):
-
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'path-does-not-exist'
-        )
-
-        # Initialize logging
         _ = logging.Handler(
-            path=path,
+            path=os.path.join(
+                os.path.dirname(__file__),
+                'path-does-not-exist'
+            ),
         )
 
 
 def test_init_filenotfounderror():
     with pytest.raises(FileNotFoundError):
-
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
-        # Initialize logging
         _ = logging.Handler(
-            path=path,
+            path=PATH,
             file_name='file-not-found.log',
             create=False
         )
@@ -195,15 +182,9 @@ def test_init_filenotfounderror():
 def test_write_header_valueerror():
     with pytest.raises(ValueError):
 
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
         # Initialize logging
         Logging = logging.Handler(
-            path=path,
+            path=PATH,
             create=True
         )
 
@@ -215,15 +196,9 @@ def test_write_header_valueerror():
 def test_write_header_typeerror():
     with pytest.raises(TypeError):
 
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
         # Initialize logging
         Logging = logging.Handler(
-            path=path,
+            path=PATH,
             create=True
         )
 
@@ -235,15 +210,9 @@ def test_write_header_typeerror():
 def test_write_typeerror():
     with pytest.raises(TypeError):
 
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
         # Initialize logging
         Logging = logging.Handler(
-            path=path,
+            path=PATH,
             create=True
         )
 
@@ -252,18 +221,15 @@ def test_write_typeerror():
         )
 
 
-def test_debug_console(caplog):
+def test_debug_console(caplog: pytest.LogCaptureFixture):
     caplog.set_level(clogging.DEBUG)
-
-    # Set up logging parameters
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'resources'
-    )
 
     # Initialize logging
     Logging = logging.Handler(
-        path=path,
+        path=os.path.join(
+            os.path.dirname(__file__),
+            'resources'
+        ),
         create=True,
         debug_console=True
     )
@@ -286,15 +252,9 @@ def test_debug_console(caplog):
 def test_pretty_dict_valueerror():
     with pytest.raises(ValueError):
 
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
         # Initialize logging
         Logging = logging.Handler(
-            path=path,
+            path=PATH,
             create=True
         )
 
@@ -317,17 +277,14 @@ def test_validate_level_valueerror():
 
 def test_logging_close_on_exception_success():
 
-    # Set up logging parameters
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'resources'
-    )
-
     # Initialize logging
     Logging = logging.Handler(
-        path=path,
+        path=os.path.join(
+            os.path.dirname(__file__),
+            'resources'
+        ),
         file_name='closes-on-exception-success.log',
-        job_information=''.join([
+        description=''.join([
             'Generates close-on-exception content for',
             ' `pytenstils.logging` functionality.'
         ]),
@@ -348,17 +305,11 @@ def test_logging_close_on_exception_success():
 def test_logging_close_on_exception_zerodivisionerror():
     with pytest.raises(ZeroDivisionError):
 
-        # Set up logging parameters
-        path = os.path.join(
-            os.path.dirname(__file__),
-            'resources'
-        )
-
         # Initialize logging
         Logging = logging.Handler(
-            path=path,
+            path=PATH,
             file_name='closes-on-exception.log',
-            job_information=''.join([
+            description=''.join([
                 'Generates close-on-exception content for',
                 ' `pytenstils.logging` functionality.'
             ]),

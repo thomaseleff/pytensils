@@ -37,4 +37,4 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -vvvsx tests/ --doctest-modules
+        pytest -vvvsx tests/
