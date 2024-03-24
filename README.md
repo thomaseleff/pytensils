@@ -27,7 +27,12 @@ An overview of all public `pytensils` objects, functions and methods exposed wit
 `.config` contains the `class` methods for reading, writing and validating `.json` format configuration-files. Access the [Source](https://github.com/thomaseleff/pytensils/blob/main/pytensils/config.py) code via GitHub.
 
 ### Initialize an instance of the config-handler
-The `config.Handler(path: str, file_name: str)` constructor initializes an instance of the config `class` and validates that `path` and `file_name` exist. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. 
+The `config.Handler(path: str, file_name: str, create: bool, Logging: pytensils.logging.Handler)` constructor initializes an instance of the config `class` and validates that `path` and `file_name` exist. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. Should the content not be able to be parsed as `json`, the constructor raises a `TypeError`.
+
+ **Advanced parameters**
+
+- The parameter `create` can be set to `False` to initialize an instance of the `class` without reading config-data from `/path/file_name`. The `create` parameter is useful in order to generate the configuration-file via Python.
+- The parameter `Logging` can be set to an instance of the `pytensils.logging.Handler` `class` to enable pretty user-logging for config-related read, write and validation errors natively
 
 ``` python
 import os
@@ -43,12 +48,7 @@ from pytensils import config
                 "bool": true,
                 "int": 1,
                 "float": 9.9,
-                "list": ["A", "B", "C"],
-                "dict": {
-                    "A": "a",
-                    "B": "b",
-                    "C": "c"
-                }
+                "list": ["A", "B", "C"]
             }
         }
 
@@ -61,8 +61,8 @@ Config = config.Handler(
 )
 ```
 
-### Read the configuration-file
-The `.read()` method parses the `.json` configuration-file and raises an `IOError` if the content of the file cannot be parsed as `.json`.
+### Access or re-load the configuration-file data
+The configuration-file data can be accessed via a `class` variable, `.data`, returned as a copy as a dictionary, `.to_dict()`, or read directly from the source `.json` config-file, `.read()`.
 
 ``` python
 import os
@@ -74,12 +74,19 @@ Config = config.Handler(
     file_name='config.json'
 )
 
-# Read
-conf_dict_object = Config.read()
+# Access the configuration-file data directly via a `class` variable
+print(Config.data)
+
+# Return a copy of the configuation-file data as a dictionary
+config_dictionary = Config.to_dict()
+print(config_dictionary)
+
+# Re-load the configuration-file data
+print(Config.read())
 ```
 
 ### Validate the configuration-file
-The `validate(config: dict, dtype: dict)` function validates that the structure of `config` matches the structure of `dtype` and returns `True` when validation is successful. The function raises any type errors within the console output as a `TypeError` when validation fails.
+The `.validate(dtypes: dict)` function validates that the structure of `config` matches the structure of `dtype` and returns `True` when validation is successful. The function raises any type errors within the console output as a `config.ValidationError` when validation fails.
 
 ``` python
 import os
@@ -103,19 +110,13 @@ Config = config.Handler(
     file_name='config.json'
 )
 
-# Read
-conf_dict_object = Config.read()
-
 # Validate
-if config.validate(
-    config=conf_dict_object,
-    dtype=dtype_dict_object
-):
+if config.validate(dtypes=dtype_dict_object):
     print('NOTE: Validation succeeded.')
 ```
 
 ### Write a dictionary to a `.json` configuration-file
-The `.write(config: dict)` method parses the `dict` object into a `.json` configuration-file.
+The `.write()` method writes the configuration-file data to a `.json` file while the `.from_dict(dict_object: dict, dtypes: dict | None = None)` method replaces the configuration-file data and writes the data to a `.json` file. When a dictionary is passed to `.from_dict` as `dtypes`, the function also validates `dict_object` based on the data-types in `dtypes`.
 
 ``` python
 import os
@@ -127,15 +128,23 @@ Config = config.Handler(
     file_name='config.json'
 )
 
-# Read
-conf_dict_object = Config.read()
-
 # Change the value of the "str" parameter within the "config" object
-conf_dict_object['config']['str'] = "DEF"
+Config.data['config']['str'] = "DEF"
 
 # Write
-Config.write(
-    config=conf_dict_object
+Config.write()
+
+# Replace the configuration-file data and write, without validation
+Config.from_dict(
+    dict_object={
+        "config": {
+            "str": "DEF",
+            "bool": True,
+            "int": 1,
+            "float": 9.9,
+            "list": ["A", "B", "C"]
+        }
+    }
 )
 ```
 
@@ -144,8 +153,28 @@ Config.write(
 
 Access an example user-log, [example.log](https://github.com/thomaseleff/pytensils/blob/v0.5.0/tests/resources/example.log), that show-cases `.logging` functionality via GitHub.
 
+### Set-up logging
+The `logging` library contains various static control variables that can be configured for all instances of the `logging.Handler` within a single Python session.
+
+- `logging.INDENT`, the number of space-characters for the standard log-indentation (default = 4).
+- `logging.LINE_LENGTH`, the maximum number of characters for a line of content (default = 79). For content longer than `logging.LINE_LENGTH`, `str` type content is automatically wrapped while `list` or `dict` type content is truncated. `logging.LINE_LENGTH` does not apply to `pd.DataFrame` type content.
+- `logging.TIME_ZONE`, the time-zone for representing start and end time values (default = 'America/New_York'). Access the list of available [timezones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) via Wikipedia.
+
+``` python
+from pytensils import logging
+
+# Set-up
+logging.INDENT = 4
+logging.LINE_LENGTH = 79
+logging.TIME_ZONE = 'America/Chicago'
+```
+
 ### Initialize an instance of the logging-handler
-The `logging.Handler(path: str, job_information: str, file_name: str = 'python.log', parameters: dict, create: bool, debug_console: bool )` constructor initializes an instance of the logging `class` and validates that `path` exists. The constructor also validates that `file_name` exists when `create=False`. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`. 
+The `logging.Handler(path: str, file_name: str = 'python.log', description: str = 'Environment information summary.', metadata: dict, create: bool, debug_console: bool )` constructor initializes an instance of the logging `class` and validates that `path` exists. The constructor also validates that `file_name` exists when `create=False`. Should the `path` not exist, the constructor raises an `OSError`. Should the `file_name` not exist, the constructor raises a `FileNotFoundError`.
+
+**Advanced parameters**
+
+- The parameter `create` can be set to `False` to initialize an instance of the `class` without creating the `.log` file. The `create` parameter is useful so that multiple Python processes can write to the same user-log without overwriting the `.log` file.
 
 ``` python
 import os

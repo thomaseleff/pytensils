@@ -123,8 +123,8 @@ class Handler():
                         )
                     )
 
-    def read(self):
-        """ Reads a '.json' config-file.
+    def read(self) -> dict:
+        """ Reads a '.json' config-file and returns the content as a `dict`.
         """
         with open(
             os.path.join(
