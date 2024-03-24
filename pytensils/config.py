@@ -16,7 +16,7 @@ import os
 import json
 import copy
 import pandas as pd
-from typing import Union
+from typing import Union, Tuple
 from pytensils import logging
 
 # Private static variable(s)
@@ -507,7 +507,7 @@ class Handler():
         self,
         dict_object: dict,
         dtype_object: dict
-    ) -> tuple[bool, dict]:
+    ) -> Tuple[bool, dict]:
         """ Returns the contents of the validation-error dictionary as
         a `pd.DataFrame`.
 
