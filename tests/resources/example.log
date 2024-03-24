@@ -1,0 +1,77 @@
+    Run information
+    ---------------
+    
+    Generates example user-log content for all `pytenstils.logging`
+        functionality.
+    
+        Start time             : 2024-03-24 17:33:17
+        Extra parameter (1)    : 1
+        Extra parameter (2)    : 2
+    
+    --------------------------------------------------------------------------
+    
+    Examples: `str`
+    ---------------
+    
+*** CRITICAL: This is a critical error string
+*** ERROR: This is an error string that exceeds the line-length limit set for
+        the log-file.
+*** WARNING: This is a warning string.
+    DEBUG: This is a debug string.
+    INFO: This is a boring short story. The quick brown fox jumped over the
+        lazy dog. The end.
+    This is an unset string.
+    
+    --------------------------------------------------------------------------
+    
+    Examples: `list`
+    ----------------
+    
+    This is a list output.
+    
+        - 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 [...]
+        - ['A', 'B', 'C']
+        - ('A', 'B', 'C')
+        - 1
+        - 2
+        - 3
+    
+    --------------------------------------------------------------------------
+    
+    Examples: `dict`
+    ----------------
+    
+    This is a dictionary output.
+    
+        A                      : a
+        B                      : b
+        123s                   : 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 [...]
+        Nineteen characters    : 19
+        List                   : ['A', 'B', 'C']
+        Tupple                 : ('A', 'B', 'C')
+    
+    --------------------------------------------------------------------------
+    
+    Examples: `pd.DataFrame`
+    ------------------------
+    
+    This is a dataframe output.
+    
+          Calories    Duration  Day
+        ----------  ----------  ---------
+               420          50  Monday
+               380          40  Tuesday
+               390          45  Wednesday
+    
+    --------------------------------------------------------------------------
+    
+    Run time
+    --------
+    
+    Run-time performance summary.
+    
+        Start time    : 17:33:17.900575
+        End time      : 17:33:18.236694
+        Run time      : 00:00:00.336119
+
+    --------------------------------------------------------------------------

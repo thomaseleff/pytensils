@@ -2,9 +2,9 @@ name: Coverage
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "v[0-9]+.[0-9]+.[0-9]+" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "v[0-9]+.[0-9]+.[0-9]+" ]
 
 permissions:
     contents: write
@@ -20,6 +20,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
@@ -59,10 +61,3 @@ jobs:
         git add coverage/coverage.svg
         git add coverage/COVERAGE.md
         git commit -m "Updated coverage"
-
-    - name: Push coverage badge
-      if: steps.verify-changed-files.outputs.files_changed == 'true'
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.github_token }}
-        branch: ${{ github.ref }}

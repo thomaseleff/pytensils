@@ -5,7 +5,7 @@ Name        : config.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : .
+Revised on  : 2024-03-24
 
 Description
 ---------------------------------------------------------------------
@@ -14,6 +14,13 @@ Contains the `class` methods for managing configuration.
 
 import os
 import json
+import copy
+import pandas as pd
+from typing import Union, Tuple
+from pytensils import logging
+
+# Private static variable(s)
+_MIN_DEPTH = 2
 
 
 class Handler():
@@ -21,7 +28,9 @@ class Handler():
     def __init__(
         self,
         path: str,
-        file_name: str
+        file_name: str = 'config.json',
+        create: bool = False,
+        Logging: Union[logging.Handler, None] = None
     ):
         """ Initializes an instance of the configuration-handler class.
 
@@ -32,32 +41,90 @@ class Handler():
                 '.json' config-file.
         file_name : `str`
             File name of the '.json' config-file.
+        create: `bool`
+            `True` or `False`, creates an empty log-file, `file_name`
+                within `path` when `True`.
+        Logging: `pytensils.logging.Handler`
+            An instance of the `pytensils.logging.Handler` class that allows
+                for native 'pretty' user-logging of all `ValidationError`
+                exceptions.
         """
 
+        # Assign class variables
+        self.path = path
+        self.file_name = file_name
+        self.data = {}
+        self.validation_errors = None
+
+        # Assign private variables
+        self._LOGGING = Logging
+
         # Validate the file-path
-        if os.path.isdir(path):
-            self.path = path
-        else:
-            raise OSError(
-                '{~/%s} does not exist.' % (path)
-            )
+        if not os.path.isdir(path):
+            if self._LOGGING:
+
+                # Logging
+                self._LOGGING.write_header(
+                    header='Configuration validation'
+                )
+                self._LOGGING.write(
+                    content='{%s} does not exist.' % (path),
+                    level='ERROR'
+                )
+                self._LOGGING.close()
+                raise OSError(
+                    'Path not found. See {%s} for more information.' % (
+                        os.path.join(
+                            self._LOGGING.path,
+                            self._LOGGING.file_name
+                        )
+                    )
+                )
+            else:
+                raise OSError('{%s} does not exist.' % (path))
 
         # Validate the file-name
-        if os.path.isfile(
-            os.path.join(path, file_name)
-        ):
-            self.file_name = file_name
-        else:
-            raise FileNotFoundError(
-                '{%s} does not exist within {~/%s}.' % (
-                    file_name,
-                    path
-                )
-            )
+        if not create:
+            if os.path.isfile(
+                os.path.join(path, file_name)
+            ):
+                self.data = self.read()
+
+            else:
+                if self._LOGGING:
+
+                    # Logging
+                    self._LOGGING.write_header(
+                        header='Configuration validation'
+                    )
+                    self._LOGGING.write(
+                        content='{%s} does not exist within {%s}.' % (
+                            file_name,
+                            path
+                        ),
+                        level='ERROR'
+                    )
+                    self._LOGGING.close()
+
+                    # Raise exception
+                    raise FileNotFoundError(
+                        'File not found. See {%s} for more information.' % (
+                            os.path.join(
+                                self._LOGGING.path,
+                                self._LOGGING.file_name
+                            )
+                        )
+                    )
+                else:
+                    raise FileNotFoundError(
+                        '{%s} does not exist within {%s}.' % (
+                            file_name,
+                            path
+                        )
+                    )
 
     def read(self) -> dict:
-        """ Reads a '.json' config-file and returns the contents as a `dict`
-        object.
+        """ Reads a '.json' config-file and returns the content as a `dict`.
         """
         with open(
             os.path.join(
@@ -67,27 +134,75 @@ class Handler():
             mode='r'
         ) as file:
             try:
-                return json.load(file)
-            except json.decoder.JSONDecodeError:
-                raise IOError(
-                    "{~/%s} is not a valid '.json' config-file." % (
-                        os.path.basename(
-                            self.file_name
-                        )
+
+                # Load `.json` config-file
+                dict_object = json.load(file)
+
+                # Validate instance
+                self._validate_instance(
+                    dict_object=dict_object,
+                    parameter=os.path.join(
+                        self.path,
+                        self.file_name
                     )
                 )
 
-    def write(
-        self,
-        config: dict
-    ):
-        """ Writes a '.json' config-file with the contents of `config`.
+                # Validate data
+                self._validate_data(
+                    dict_object=dict_object,
+                    parameter=os.path.join(
+                        self.path,
+                        self.file_name
+                    )
+                )
 
-        Parameters
-        ----------
-        config : `dict`
-            Dictionary object that contains the parameters essential to the
-                application.
+                # Validate depth
+                self._validate_depth(
+                    dict_object=dict_object,
+                    parameter=os.path.join(
+                        self.path,
+                        self.file_name
+                    )
+                )
+
+                return dict_object
+
+            except json.decoder.JSONDecodeError:
+                if self._LOGGING:
+
+                    # Logging
+                    self._LOGGING.write_header(
+                        header='Configuration validation'
+                    )
+                    self._LOGGING.write(
+                        content="{%s} is not a valid '.json' config-file." % (
+                            self.file_name
+                        ),
+                        level='ERROR'
+                    )
+                    self._LOGGING.close()
+
+                    # Raise exception
+                    raise TypeError(
+                        ''.join([
+                            'Invalid config-file format.',
+                            ' See {%s} for more information.' % (
+                                os.path.join(
+                                    self._LOGGING.path,
+                                    self._LOGGING.file_name
+                                )
+                            )
+                        ])
+                    )
+                else:
+                    raise TypeError(
+                        "{%s} is not a valid '.json' config-file." % (
+                            self.file_name
+                        )
+                    )
+
+    def write(self):
+        """ Writes a '.json' config-file.
         """
         with open(
             os.path.join(
@@ -97,121 +212,377 @@ class Handler():
             mode='w+'
         ) as file:
             json.dump(
-                config,
+                self.data,
                 file,
                 indent=4
             )
 
+    def validate(
+        self,
+        dtypes: dict
+    ) -> bool:
+        """ Validates the config-file data against the dtypes in `dtypes`.
+        Returns `True` when validation completes successfully.
 
-def validate(
-    config: dict,
-    dtype: dict
-):
-    """ Validates `config` against the dtypes in `dtype`.
+        Parameters
+        ----------
+        dtypes : `dict`
+            Dictionary object that contains the expected
+                configuration value dtypes.
+        """
 
-    Parameters
-    ----------
-    config : `dict`
-        Dictionary object that contains the parameters essential to the
-            application.
-    dtype : `dict`
-        Dictionary object that contains the expected `config` value dtypes.
-    """
+        # Validate instance
+        self._validate_instance(dict_object=dtypes, parameter='dtypes')
 
-    config_errors = {}
-    error = False
+        # Validate data
+        self._validate_data(dict_object=dtypes, parameter='dtypes')
 
-    for section in config.keys():
-        if section not in dtype.keys():
-            dtype[section] = {}
-            config_errors[section] = {}
-        else:
-            config_errors[section] = {}
+        # Validate depth
+        self._validate_depth(dict_object=dtypes, parameter='dtypes')
 
-        for key, value in config[section].items():
-            if key not in dtype[section].keys():
-                config_errors[section][key] = (
-                    'No dtype found in {dtypes}.'
-                )
-                error = True
+        # Validate dtypes
+        self._validate_dtypes(
+            dict_object=copy.deepcopy(self.data),
+            dtype_object=dtypes
+        )
+
+        # Set validation error status
+        self.validation_errors = None
+
+        return True
+
+    def to_dict(self) -> dict:
+        """ Returns a dictionary object of the config-file data.
+        """
+        return copy.deepcopy(self.data)
+
+    def from_dict(
+        self,
+        dict_object: dict,
+        dtypes: Union[dict, None] = None
+    ):
+        """ Updates the config-file data with the contents of `dict_object`
+        and validates the configuration against `dtypes` when
+        `dtypes` is not None.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object containing configuration values.
+        dtypes : `dict`
+            Dictionary object that contains the expected
+                configuration value dtypes.
+        """
+
+        # Validate instance
+        self._validate_instance(
+            dict_object=dict_object,
+            parameter='dict_object'
+        )
+
+        # Validate data
+        self._validate_data(
+            dict_object=dict_object,
+            parameter='dict_object'
+        )
+
+        # Validate depth
+        self._validate_depth(
+            dict_object=dict_object,
+            parameter='dict_object'
+        )
+
+        if dtypes:
+
+            # Validate instance
+            self._validate_instance(dict_object=dtypes, parameter='dtypes')
+
+            # Validate data
+            self._validate_data(dict_object=dtypes, parameter='dtypes')
+
+            # Validate depth
+            self._validate_depth(dict_object=dtypes, parameter='dtypes')
+
+            # Validate dtypes
+            self._validate_dtypes(dict_object=dict_object, dtype_object=dtypes)
+
+        # Retain configuration data
+        self.data = copy.deepcopy(dict_object)
+
+        # Write configuration data
+        self.write()
+
+        return self
+
+    def _validate_instance(
+        self,
+        dict_object: dict,
+        parameter: str
+    ):
+        """ Validates the type instance of `dict_object`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to validate.
+        parameter : 'str'
+            The name of the parameter to report in the error message.
+        """
+        error_msg = 'Invalid data type {%s} for {%s}. Expected {dict}.' % (
+            type(dict_object).__name__,
+            parameter
+        )
+
+        if not isinstance(dict_object, dict):
+            if self._LOGGING:
+                self._raise_general_validation_error(error_msg=error_msg)
+            raise ValidationError(error_msg)
+
+    def _validate_data(
+        self,
+        dict_object: dict,
+        parameter: str
+    ):
+        """ Validates the data in `dict_object`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to validate.
+        parameter : `dict`
+            The name of the parameter to report in the error message.
+        """
+        error_msg = '{%s} is empty.' % (
+            parameter
+        )
+
+        if not dict_object:
+            if self._LOGGING:
+                self._raise_general_validation_error(error_msg=error_msg)
             else:
-                if type(value).__name__ != dtype[section][key]:
-                    config_errors[section][key] = (
-                        'Invalid dtype. Expected <%s>.' % (
-                            dtype[section][key]
+                raise ValidationError(error_msg)
+
+    def _validate_depth(
+        self,
+        dict_object: dict,
+        parameter: str
+    ):
+        """ Validates the depth of `dict_object`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to validate.
+        """
+        error_msg = ''.join([
+            'The parameter {%s} must be a dictionary of' % (
+                parameter
+            ),
+            ' dictionaries with a minimum depth of {%s}.' % (
+                _MIN_DEPTH
+            )
+        ])
+
+        if not logging._return_dictionary_depth(
+            dict_object=dict_object
+        ) >= _MIN_DEPTH:
+            if self._LOGGING:
+                self._raise_general_validation_error(error_msg=error_msg)
+            else:
+                raise ValidationError(error_msg)
+
+    def _validate_dtypes(
+        self,
+        dict_object: dict,
+        dtype_object: dict
+    ):
+        """ Validates `dict_object` against the dtypes in `dtype_object`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object containing configuration values.
+        dtype_object : `dict`
+            Dictionary object that contains the expected
+                configuration value dtypes.
+        """
+        error_msg = ''.join([
+            'Validation failed. The following parameter values',
+            ' are inconsistent with the expected data-types.'
+        ])
+
+        # Parse configuration dtype errors
+        error, dtype_errors = self._parse_dtype_errors_to_dict(
+            dict_object=dict_object,
+            dtype_object=dtype_object
+        )
+
+        # Retain configuration dtype errors
+        if error:
+            self.validation_errors = copy.deepcopy(dtype_errors)
+
+            # Raise configuration dtype errors
+            if self._LOGGING:
+                self._raise_dtype_validation_error(error_msg=error_msg)
+            else:
+                raise ValidationError(
+                    ''.join([
+                        error_msg,
+                        '\n%s' % (
+                            json.dumps(dtype_errors, indent=2)
                         )
+                    ])
+                )
+
+        else:
+            self.validation_errors = None
+
+    def _raise_general_validation_error(
+        self,
+        error_msg: str
+    ):
+        """ Reports an error string to `logging.Handler` and raises
+        a `ValidationError`.
+        """
+        # Logging
+        self._LOGGING.write_header(
+            header='Configuration validation'
+        )
+        self._LOGGING.write(
+            content=error_msg,
+            level='ERROR'
+        )
+        self._LOGGING.close()
+
+        # Raise exception
+        raise ValidationError(
+            ''.join([
+                'Validation failed.',
+                ' See {%s} for more information.' % (
+                    os.path.join(
+                        self._LOGGING.path,
+                        self._LOGGING.file_name
+                    )
+                )
+            ])
+        )
+
+    def _raise_dtype_validation_error(
+        self,
+        error_msg: str
+    ):
+        """ Reports an error string and all invalid configuration parameters
+        to `logging.Handler` and raises a `ValidationError`.
+        """
+
+        # Logging
+        self._LOGGING.write_header(
+            header='Configuration validation'
+        )
+        self._LOGGING.write(
+            content=error_msg,
+            level='ERROR'
+        )
+        self._LOGGING.write(
+            content=self._convert_dtype_errors_to_df(
+                dict_object=self.validation_errors
+            )
+        )
+        self._LOGGING.close()
+
+        # Raise exception
+        raise ValidationError(
+            ''.join([
+                'Validation failed.',
+                ' See {%s} for more information.' % (
+                    os.path.join(
+                        self._LOGGING.path,
+                        self._LOGGING.file_name
+                    )
+                )
+            ])
+        )
+
+    def _parse_dtype_errors_to_dict(
+        self,
+        dict_object: dict,
+        dtype_object: dict
+    ) -> Tuple[bool, dict]:
+        """ Returns the contents of the validation-error dictionary as
+        a `pd.DataFrame`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to parse.
+        dtype_object : `dict`
+            Dictionary object that contains the expected
+                configuration value dtypes.
+        """
+        dtype_errors = {}
+        error = False
+        for section in dict_object.keys():
+            if section not in dtype_object.keys():
+                dtype_object[section] = {}
+                dtype_errors[section] = {
+                    '-N/A-': 'No corresponding section found in {dtypes}.'
+                }
+            else:
+                dtype_errors[section] = {}
+
+            for key, value in dict_object[section].items():
+                if key not in dtype_object[section].keys():
+                    dtype_errors[section][key] = (
+                        'No dtype found in {dtypes}.'
                     )
                     error = True
                 else:
-                    pass
-
-    len0 = max(
-        [len(section) for section in config_errors.keys()]
-    )
-
-    if error:
-        for section in config_errors.keys():
-            if len(config_errors[section].keys()) > 0:
-                print('\n')
-                print(
-                    '*** ERROR: The following errors occurred when' +
-                    ' validating the {%s} parameters.\n' %
-                    (section)
-                )
-
-                len1 = max(
-                    [len(key) for key in config_errors[section].keys()]
-                )
-                len2 = max(
-                    [
-                        len(value) for value in (
-                            config_errors[section].values()
+                    if type(value).__name__ != dtype_object[section][key]:
+                        dtype_errors[section][key] = (
+                            'Invalid dtype {%s}. Expected {%s}.' % (
+                                type(value).__name__,
+                                dtype_object[section][key]
+                            )
                         )
-                    ]
-                )
+                        error = True
+                    else:
+                        pass
 
-                print(
-                    "{:<8} {:<{len0}} {:<{len1}} {:<{len2}}".format(
-                        '',
-                        'Section',
-                        'Key',
-                        'Error',
-                        len0=len0+4,
-                        len1=len1+4,
-                        len2=len2+4
-                    )
-                )
-                print(
-                    "{:<8} {:<{len0}} {:<{len1}} {:<{len2}}".format(
-                        '',
-                        '-------',
-                        '---',
-                        '-----',
-                        len0=len0+4,
-                        len1=len1+4,
-                        len2=len2+4
-                    )
-                )
+        return (error, dtype_errors)
 
-                for key, value in config_errors[section].items():
-                    print(
-                        ("{:<8} {:<{len0}} {:<{len1}} {:<{len2}}").format(
-                            '',
-                            section,
-                            key,
-                            value,
-                            len0=len0+4,
-                            len1=len1+4,
-                            len2=len2+4
-                        )
+    def _convert_dtype_errors_to_df(
+        self,
+        dict_object: dict
+    ) -> pd.DataFrame:
+        """ Returns the contents of the validation-error dictionary as
+        a `pd.DataFrame`.
+
+        Parameters
+        ----------
+        dict_object : `dict`
+            Dictionary object to convert.
+        """
+        df = pd.DataFrame()
+        for key in dict_object.keys():
+            df = pd.concat(
+                [
+                    df,
+                    pd.DataFrame.from_dict(
+                        {
+                            'Section': [key] * len(
+                                dict_object[key].values()
+                            ),
+                            'Key': dict_object[key].keys(),
+                            'Error': dict_object[key].values()
+                        }
                     )
-                print(
-                    '\n'
-                )
-            else:
-                pass
-        raise TypeError(
-            'Validation failed.'
-        )
-    else:
-        return True
+                ],
+                axis=0,
+                ignore_index=True
+            )
+
+        return df
+
+
+class ValidationError(Exception):
+    pass

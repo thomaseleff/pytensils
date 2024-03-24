@@ -2,9 +2,10 @@ name: Unit-Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "v[0-9]+.[0-9]+.[0-9]+" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "v[0-9]+.[0-9]+.[0-9]+" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,6 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
@@ -36,4 +39,4 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -vvvsx tests/ --doctest-modules
+        pytest -vvvsx tests/
