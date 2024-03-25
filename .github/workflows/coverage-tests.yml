@@ -41,7 +41,7 @@ jobs:
       run: |
         if [ ! -d coverage ]; then mkdir coverage; fi
         coverage run -m pytest tests/
-        coverage report -m --format markdown > ./coverage/COVERAGE.md
+        coverage report -m --format=markdown --omit=tests/* > ./coverage/COVERAGE.md
 
     - name: Create coverage badge
       uses: tj-actions/coverage-badge-py@v2
