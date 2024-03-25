@@ -8,7 +8,10 @@ on:
 
 permissions:
     contents: write
-      
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 jobs:
   build:
 
@@ -37,7 +40,7 @@ jobs:
     - name: Create coverage report
       run: |
         if [ ! -d coverage ]; then mkdir coverage; fi
-        coverage run -m pytest tests/ --doctest-modules
+        coverage run -m pytest tests/
         coverage report -m --format markdown > ./coverage/COVERAGE.md
 
     - name: Create coverage badge
@@ -53,11 +56,13 @@ jobs:
       with:
         files: ./coverage/coverage.svg
 
-    - name: Commit coverage badge
+    - name: Commit & push coverage badge
       if: steps.verify-changed-files.outputs.files_changed == 'true'
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
+        git remote add github https://github.com/thomaseleff/pytensils.git
         git add coverage/coverage.svg
         git add coverage/COVERAGE.md
         git commit -m "Updated coverage"
+        git push github $BRANCH_NAME
