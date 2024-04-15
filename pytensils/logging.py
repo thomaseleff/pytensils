@@ -62,7 +62,7 @@ class Handler():
             File name of the log-file.
         description : `str`
             Information about the executed Python job run.
-        metadata : `str`
+        metadata : `dict`
             Environment parameters to display as metadata about the executed
                 Python job run.
         create: `bool`
