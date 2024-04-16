@@ -513,16 +513,6 @@ class Handler():
                     string=''.join([
                         ' '*self._INDENT,
                         '- ',
-                        # textwrap.shorten(
-                        #     text=str(item),
-                        #     width=(
-                        #         self._LINE_LENGTH
-                        #         - self._INDENT
-                        #         - self._INDENT
-                        #         - 3
-                        #     ),
-                        #     break_long_words=True
-                        # )
                         self._pretty_textwrap(
                             string=str(item),
                             width=(
@@ -568,18 +558,6 @@ class Handler():
                             key,
                             ' '*(max_key_length-len(key)+self._INDENT),
                             ': ',
-                            # textwrap.shorten(
-                            #     str(dict_object[key]),
-                            #     width=(
-                            #         self._LINE_LENGTH
-                            #         - self._INDENT
-                            #         - self._INDENT
-                            #         - max_key_length
-                            #         - self._INDENT
-                            #         - 3
-                            #     ),
-                            #     break_long_words=True
-                            # )
                             self._pretty_textwrap(
                                 string=str(dict_object[key]),
                                 width=(
