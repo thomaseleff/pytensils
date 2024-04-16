@@ -5,7 +5,7 @@ Name        : logging.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-24
-Revised on  : .
+Revised on  : 2024-04-15
 
 Description
 ---------------------------------------------------------------------
@@ -20,6 +20,7 @@ import datetime as dt
 import pytz
 import logging as clogging
 import pandas as pd
+from pytensils import errors
 from typing import Union, Callable
 
 # Static variable(s)
@@ -305,7 +306,7 @@ class Handler():
         self,
         func: Callable
     ) -> Callable:
-        """ Logs any unhandled exception raised by the {func} passed.
+        """ Logs any unhandled exception raised by the `func` passed.
 
         Parameters
         ----------
@@ -316,6 +317,22 @@ class Handler():
         def wrapper(*args, **kwargs):
             try:
                 result = func(*args, **kwargs)
+
+            # Raise all `pytensils` exceptions
+            except errors.config.all() as e:
+                errors.config.raise_exception(
+                    msg=(
+                        'See {%s} for more information.' % (
+                            os.path.join(
+                                self.path,
+                                self.file_name
+                            )
+                        )
+                    ),
+                    exception=e
+                )
+
+            # Raise all other exceptions
             except Exception as e:
 
                 self.write_header(

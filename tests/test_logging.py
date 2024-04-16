@@ -16,7 +16,7 @@ import os
 import pandas as pd
 import logging as clogging
 import pytest
-from pytensils import logging
+from pytensils import logging, errors
 
 PATH = os.path.join(
     os.path.dirname(__file__),
@@ -322,3 +322,128 @@ def test_logging_close_on_exception_zerodivisionerror():
             return 1 / 0
 
         divide_by_zero()
+
+
+def test_logging_close_on_exception_oserror():
+    with pytest.raises(OSError):
+
+        # Initialize logging
+        Logging = logging.Handler(
+            path=PATH,
+            file_name='closes-on-exception-oserror.log',
+            description=''.join([
+                'Generates close-on-exception content for',
+                ' `pytenstils.logging` functionality.'
+            ]),
+            create=True,
+            debug_console=False
+        )
+
+        @Logging.close_on_exception
+        def raise_oserror():
+            errors.config.raise_exception(
+                msg='',
+                exception=errors.config.OSError()
+            )
+
+        raise_oserror()
+
+
+def test_logging_close_on_exception_filenotfounderror():
+    with pytest.raises(FileNotFoundError):
+
+        # Initialize logging
+        Logging = logging.Handler(
+            path=PATH,
+            file_name='closes-on-exception-filenotfounderror.log',
+            description=''.join([
+                'Generates close-on-exception content for',
+                ' `pytenstils.logging` functionality.'
+            ]),
+            create=True,
+            debug_console=False
+        )
+
+        @Logging.close_on_exception
+        def raise_filenotfounderror():
+            errors.config.raise_exception(
+                msg='',
+                exception=errors.config.FileNotFoundError()
+            )
+
+        raise_filenotfounderror()
+
+
+def test_logging_close_on_exception_typeerror():
+    with pytest.raises(TypeError):
+
+        # Initialize logging
+        Logging = logging.Handler(
+            path=PATH,
+            file_name='closes-on-exception-typeerror.log',
+            description=''.join([
+                'Generates close-on-exception content for',
+                ' `pytenstils.logging` functionality.'
+            ]),
+            create=True,
+            debug_console=False
+        )
+
+        @Logging.close_on_exception
+        def raise_typeerror():
+            errors.config.raise_exception(
+                msg='',
+                exception=errors.config.TypeError()
+            )
+
+        raise_typeerror()
+
+
+def test_logging_close_on_exception_validationerror():
+    with pytest.raises(errors.config.ValidationError):
+
+        # Initialize logging
+        Logging = logging.Handler(
+            path=PATH,
+            file_name='closes-on-exception-validationerror.log',
+            description=''.join([
+                'Generates close-on-exception content for',
+                ' `pytenstils.logging` functionality.'
+            ]),
+            create=True,
+            debug_console=False
+        )
+
+        @Logging.close_on_exception
+        def raise_validationerror():
+            errors.config.raise_exception(
+                msg='',
+                exception=errors.config.ValidationError()
+            )
+
+        raise_validationerror()
+
+
+def test_logging_close_on_exception_notimplementederror():
+    with pytest.raises(NotImplementedError):
+
+        # Initialize logging
+        Logging = logging.Handler(
+            path=PATH,
+            file_name='closes-on-exception-notimplementederror.log',
+            description=''.join([
+                'Generates close-on-exception content for',
+                ' `pytenstils.logging` functionality.'
+            ]),
+            create=True,
+            debug_console=False
+        )
+
+        @Logging.close_on_exception
+        def raise_notimplementederror():
+            errors.config.raise_exception(
+                msg='',
+                exception=ValueError()
+            )
+
+        raise_notimplementederror()
