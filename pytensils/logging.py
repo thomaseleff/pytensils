@@ -5,7 +5,7 @@ Name        : logging.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-24
-Revised on  : 2024-04-15
+Revised on  : 2024-04-16
 
 Description
 ---------------------------------------------------------------------
@@ -18,7 +18,7 @@ import tabulate
 import inspect
 import datetime as dt
 import pytz
-import logging as clogging
+import logging
 import pandas as pd
 from pytensils import errors
 from typing import Union, Callable
@@ -32,10 +32,12 @@ TIMEZONE = 'America/New_York'
 _MAX_DEPTH = 1
 
 # Setup CPython logging
-clogging.basicConfig(
-    level=clogging.DEBUG,
-    format='[DEBUG] %(message)s'
-)
+pytensils = logging.getLogger('pytensils')
+pytensils.setLevel(level=logging.DEBUG)
+debugger = logging.StreamHandler()
+debugger.setLevel(level=logging.DEBUG)
+debugger.setFormatter(fmt=logging.Formatter('[DEBUG] %(message)s'))
+pytensils.addHandler(hdlr=debugger)
 
 # Setup tabulate
 tabulate.PRESERVE_WHITESPACE = True
@@ -485,7 +487,7 @@ class Handler():
 
         # Debug
         if self.debug_console:
-            clogging.debug(string.replace('\n', '\n[DEBUG] '))
+            pytensils.debug(string.replace('\n', '\n[DEBUG] '))
 
         return ''.join([string, '\n'])
 
@@ -678,7 +680,7 @@ def _validate_level(level: str):
             ]
     """
     try:
-        clogging._checkLevel(level=level)
+        logging._checkLevel(level=level)
     except ValueError:
         raise ValueError(
             'Invalid level {%s}.' % (level)
