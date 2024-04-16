@@ -14,7 +14,7 @@ Tests methods within `pytensils.config`.
 
 import os
 import pytest
-from pytensils import config, logging
+from pytensils import config, logging, errors
 
 PATH = os.path.join(
     os.path.dirname(__file__),
@@ -216,7 +216,7 @@ def test_validate_success(
 
 
 def test_validate_instance_validationerror(CONFIG_FIXTURE: config.Handler):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE._validate_instance(
             dict_object=['A', 'B', 'C"'],
             parameter='invalid-instance-dict-object'
@@ -226,7 +226,7 @@ def test_validate_instance_validationerror(CONFIG_FIXTURE: config.Handler):
 def test_validate_instance_logging_validationerror(
     CONFIG_FIXTURE_WITH_LOGGING: config.Handler
 ):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE_WITH_LOGGING._validate_instance(
             dict_object=['A', 'B', 'C"'],
             parameter='invalid-instance-dict-object'
@@ -234,7 +234,7 @@ def test_validate_instance_logging_validationerror(
 
 
 def test_validate_data_validationerror(CONFIG_FIXTURE: config.Handler):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE._validate_data(
             dict_object={},
             parameter='empty-dict-object'
@@ -244,7 +244,7 @@ def test_validate_data_validationerror(CONFIG_FIXTURE: config.Handler):
 def test_validate_data_logging_validationerror(
     CONFIG_FIXTURE_WITH_LOGGING: config.Handler
 ):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE_WITH_LOGGING._validate_data(
             dict_object={},
             parameter='empty-dict-object'
@@ -252,7 +252,7 @@ def test_validate_data_logging_validationerror(
 
 
 def test_validate_depth_validationerror(CONFIG_FIXTURE: config.Handler):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE._validate_depth(
             dict_object={'A': 'str'},
             parameter='invalid-depth-dict-object'
@@ -262,7 +262,7 @@ def test_validate_depth_validationerror(CONFIG_FIXTURE: config.Handler):
 def test_validate_depth_logging_validationerror(
     CONFIG_FIXTURE_WITH_LOGGING: config.Handler
 ):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_FIXTURE_WITH_LOGGING._validate_depth(
             dict_object={'A': 'str'},
             parameter='invalid-depth-dict-object'
@@ -273,7 +273,7 @@ def test_validate_dtypes_validationerror(
     CONFIG_VALIDATION_ERROR_FIXTURE: config.Handler,
     DTYPES_FIXTURE: config.Handler
 ):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_VALIDATION_ERROR_FIXTURE.validate(
             dtypes=DTYPES_FIXTURE.to_dict()
         )
@@ -283,7 +283,7 @@ def test_validate_dtypes_logging_validationerror(
     CONFIG_VALIDATION_ERROR_FIXTURE_WITH_LOGGING: config.Handler,
     DTYPES_FIXTURE: config.Handler
 ):
-    with pytest.raises(config.ValidationError):
+    with pytest.raises(errors.config.ValidationError):
         CONFIG_VALIDATION_ERROR_FIXTURE_WITH_LOGGING.validate(
             dtypes=DTYPES_FIXTURE.to_dict()
         )
