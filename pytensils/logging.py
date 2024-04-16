@@ -5,7 +5,7 @@ Name        : logging.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-24
-Revised on  : .
+Revised on  : 2024-04-16
 
 Description
 ---------------------------------------------------------------------
@@ -18,8 +18,9 @@ import tabulate
 import inspect
 import datetime as dt
 import pytz
-import logging as clogging
+import logging
 import pandas as pd
+from pytensils import errors
 from typing import Union, Callable
 
 # Static variable(s)
@@ -31,10 +32,12 @@ TIMEZONE = 'America/New_York'
 _MAX_DEPTH = 1
 
 # Setup CPython logging
-clogging.basicConfig(
-    level=clogging.DEBUG,
-    format='[DEBUG] %(message)s'
-)
+pytensils = logging.getLogger('pytensils')
+pytensils.setLevel(level=logging.DEBUG)
+debugger = logging.StreamHandler()
+debugger.setLevel(level=logging.DEBUG)
+debugger.setFormatter(fmt=logging.Formatter('[DEBUG] %(message)s'))
+pytensils.addHandler(hdlr=debugger)
 
 # Setup tabulate
 tabulate.PRESERVE_WHITESPACE = True
@@ -62,7 +65,7 @@ class Handler():
             File name of the log-file.
         description : `str`
             Information about the executed Python job run.
-        metadata : `str`
+        metadata : `dict`
             Environment parameters to display as metadata about the executed
                 Python job run.
         create: `bool`
@@ -305,7 +308,7 @@ class Handler():
         self,
         func: Callable
     ) -> Callable:
-        """ Logs any unhandled exception raised by the {func} passed.
+        """ Logs any unhandled exception raised by the `func` passed.
 
         Parameters
         ----------
@@ -316,6 +319,22 @@ class Handler():
         def wrapper(*args, **kwargs):
             try:
                 result = func(*args, **kwargs)
+
+            # Raise all `pytensils` exceptions
+            except errors.config.all() as e:
+                errors.config.raise_exception(
+                    msg=(
+                        'See {%s} for more information.' % (
+                            os.path.join(
+                                self.path,
+                                self.file_name
+                            )
+                        )
+                    ),
+                    exception=e
+                )
+
+            # Raise all other exceptions
             except Exception as e:
 
                 self.write_header(
@@ -468,7 +487,7 @@ class Handler():
 
         # Debug
         if self.debug_console:
-            clogging.debug(string.replace('\n', '\n[DEBUG] '))
+            pytensils.debug(string.replace('\n', '\n[DEBUG] '))
 
         return ''.join([string, '\n'])
 
@@ -496,15 +515,14 @@ class Handler():
                     string=''.join([
                         ' '*self._INDENT,
                         '- ',
-                        textwrap.shorten(
-                            text=str(item),
+                        self._pretty_textwrap(
+                            string=str(item),
                             width=(
                                 self._LINE_LENGTH
                                 - self._INDENT
                                 - self._INDENT
                                 - 3
-                            ),
-                            break_long_words=True
+                            )
                         )
                     ])
                 ) for item in list_object
@@ -542,8 +560,8 @@ class Handler():
                             key,
                             ' '*(max_key_length-len(key)+self._INDENT),
                             ': ',
-                            textwrap.shorten(
-                                str(dict_object[key]),
+                            self._pretty_textwrap(
+                                string=str(dict_object[key]),
                                 width=(
                                     self._LINE_LENGTH
                                     - self._INDENT
@@ -551,8 +569,7 @@ class Handler():
                                     - max_key_length
                                     - self._INDENT
                                     - 3
-                                ),
-                                break_long_words=True
+                                )
                             )
                         ])
                     ) for key in list(dict_object.keys())
@@ -617,13 +634,40 @@ class Handler():
         else:
             return False
 
+    def _pretty_textwrap(
+        self,
+        string: str,
+        width: int
+    ) -> str:
+        """ Returns a 'pretty' formatted shortened string.
+
+        Parameters
+        ----------
+        string : `str`
+            String to 'pretty' format.
+        width : `int`
+            The maximum width of the returned string.
+        """
+        if len(string) >= width and ' ' not in string:
+            return '[...]'.join(
+                [
+                    string[:(width-round(width/2)-5)],
+                    string[(len(string)-round(width/2)):]]
+            )
+        else:
+            return textwrap.shorten(
+                str(string),
+                width=width,
+                break_long_words=True
+            )
+
 
 def _validate_level(level: str):
     """ Validates the `level` scope for logging.
 
     Parameters
     ----------
-    level: `str`
+    level : `str`
         Any level available by `logging`.
 
             e.g., [
@@ -636,7 +680,7 @@ def _validate_level(level: str):
             ]
     """
     try:
-        clogging._checkLevel(level=level)
+        logging._checkLevel(level=level)
     except ValueError:
         raise ValueError(
             'Invalid level {%s}.' % (level)
@@ -648,7 +692,7 @@ def _return_level_substring(level: str):
 
     Parameters
     ----------
-    level: `str`
+    level : `str`
         Any level available by `logging`.
 
             e.g., [

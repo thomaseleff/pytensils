@@ -5,7 +5,7 @@ Name        : config.py
 Location    : ~/
 Author      : Tom Eleff
 Published   : 2024-03-19
-Revised on  : 2024-03-24
+Revised on  : 2024-04-15
 
 Description
 ---------------------------------------------------------------------
@@ -17,7 +17,7 @@ import json
 import copy
 import pandas as pd
 from typing import Union, Tuple
-from pytensils import logging
+from pytensils import logging, errors
 
 # Private static variable(s)
 _MIN_DEPTH = 2
@@ -72,7 +72,7 @@ class Handler():
                     level='ERROR'
                 )
                 self._LOGGING.close()
-                raise OSError(
+                raise errors.config.OSError(
                     'Path not found. See {%s} for more information.' % (
                         os.path.join(
                             self._LOGGING.path,
@@ -81,7 +81,9 @@ class Handler():
                     )
                 )
             else:
-                raise OSError('{%s} does not exist.' % (path))
+                raise errors.config.OSError(
+                    '{%s} does not exist.' % (path)
+                )
 
         # Validate the file-name
         if not create:
@@ -107,7 +109,7 @@ class Handler():
                     self._LOGGING.close()
 
                     # Raise exception
-                    raise FileNotFoundError(
+                    raise errors.config.FileNotFoundError(
                         'File not found. See {%s} for more information.' % (
                             os.path.join(
                                 self._LOGGING.path,
@@ -116,7 +118,7 @@ class Handler():
                         )
                     )
                 else:
-                    raise FileNotFoundError(
+                    raise errors.config.FileNotFoundError(
                         '{%s} does not exist within {%s}.' % (
                             file_name,
                             path
@@ -183,7 +185,7 @@ class Handler():
                     self._LOGGING.close()
 
                     # Raise exception
-                    raise TypeError(
+                    raise errors.config.TypeError(
                         ''.join([
                             'Invalid config-file format.',
                             ' See {%s} for more information.' % (
@@ -195,7 +197,7 @@ class Handler():
                         ])
                     )
                 else:
-                    raise TypeError(
+                    raise errors.config.TypeError(
                         "{%s} is not a valid '.json' config-file." % (
                             self.file_name
                         )
@@ -336,7 +338,7 @@ class Handler():
         if not isinstance(dict_object, dict):
             if self._LOGGING:
                 self._raise_general_validation_error(error_msg=error_msg)
-            raise ValidationError(error_msg)
+            raise errors.config.ValidationError(error_msg)
 
     def _validate_data(
         self,
@@ -360,7 +362,7 @@ class Handler():
             if self._LOGGING:
                 self._raise_general_validation_error(error_msg=error_msg)
             else:
-                raise ValidationError(error_msg)
+                raise errors.config.ValidationError(error_msg)
 
     def _validate_depth(
         self,
@@ -389,7 +391,7 @@ class Handler():
             if self._LOGGING:
                 self._raise_general_validation_error(error_msg=error_msg)
             else:
-                raise ValidationError(error_msg)
+                raise errors.config.ValidationError(error_msg)
 
     def _validate_dtypes(
         self,
@@ -425,7 +427,7 @@ class Handler():
             if self._LOGGING:
                 self._raise_dtype_validation_error(error_msg=error_msg)
             else:
-                raise ValidationError(
+                raise errors.config.ValidationError(
                     ''.join([
                         error_msg,
                         '\n%s' % (
@@ -455,7 +457,7 @@ class Handler():
         self._LOGGING.close()
 
         # Raise exception
-        raise ValidationError(
+        raise errors.config.ValidationError(
             ''.join([
                 'Validation failed.',
                 ' See {%s} for more information.' % (
@@ -491,7 +493,7 @@ class Handler():
         self._LOGGING.close()
 
         # Raise exception
-        raise ValidationError(
+        raise errors.config.ValidationError(
             ''.join([
                 'Validation failed.',
                 ' See {%s} for more information.' % (
@@ -582,7 +584,3 @@ class Handler():
             )
 
         return df
-
-
-class ValidationError(Exception):
-    pass
