@@ -513,15 +513,14 @@ class Handler():
                     string=''.join([
                         ' '*self._INDENT,
                         '- ',
-                        textwrap.shorten(
-                            text=str(item),
+                        self._pretty_textwrap(
+                            string=str(item),
                             width=(
                                 self._LINE_LENGTH
                                 - self._INDENT
                                 - self._INDENT
                                 - 3
-                            ),
-                            break_long_words=True
+                            )
                         )
                     ])
                 ) for item in list_object
@@ -559,8 +558,8 @@ class Handler():
                             key,
                             ' '*(max_key_length-len(key)+self._INDENT),
                             ': ',
-                            textwrap.shorten(
-                                str(dict_object[key]),
+                            self._pretty_textwrap(
+                                string=str(dict_object[key]),
                                 width=(
                                     self._LINE_LENGTH
                                     - self._INDENT
@@ -568,8 +567,7 @@ class Handler():
                                     - max_key_length
                                     - self._INDENT
                                     - 3
-                                ),
-                                break_long_words=True
+                                )
                             )
                         ])
                     ) for key in list(dict_object.keys())
@@ -634,13 +632,40 @@ class Handler():
         else:
             return False
 
+    def _pretty_textwrap(
+        self,
+        string: str,
+        width: int
+    ) -> str:
+        """ Returns a 'pretty' formatted shortened string.
+
+        Parameters
+        ----------
+        string : `str`
+            String to 'pretty' format.
+        width : `int`
+            The maximum width of the returned string.
+        """
+        if len(string) >= width and ' ' not in string:
+            return '[...]'.join(
+                [
+                    string[:(width-round(width/2)-5)],
+                    string[(len(string)-round(width/2)):]]
+            )
+        else:
+            return textwrap.shorten(
+                str(string),
+                width=width,
+                break_long_words=True
+            )
+
 
 def _validate_level(level: str):
     """ Validates the `level` scope for logging.
 
     Parameters
     ----------
-    level: `str`
+    level : `str`
         Any level available by `logging`.
 
             e.g., [
@@ -665,7 +690,7 @@ def _return_level_substring(level: str):
 
     Parameters
     ----------
-    level: `str`
+    level : `str`
         Any level available by `logging`.
 
             e.g., [
