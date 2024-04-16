@@ -44,6 +44,12 @@ def LOGGING_FIXTURE():
 
 def test_logging_success(LOGGING_FIXTURE: logging.Handler):
 
+    string = ''.join([
+        'This string is longer than 89 characters',
+        ' and will be truncated causing an empty string to be displayed.'
+    ])
+    string_no_whitespace = string.replace(' ', '')
+
     # Generate `str` test(s)
     LOGGING_FIXTURE.write_header(
         header='Examples: `str`'
@@ -89,6 +95,8 @@ def test_logging_success(LOGGING_FIXTURE: logging.Handler):
     )
     LOGGING_FIXTURE.write(
         content=[
+            string,
+            string_no_whitespace,
             ' '.join(str(i) for i in list(range(52))),
             ['A', 'B', 'C'],
             ('A', 'B', 'C'),
@@ -110,6 +118,8 @@ def test_logging_success(LOGGING_FIXTURE: logging.Handler):
         content={
             'A': 'a',
             'B': 'b',
+            'With whitespace, > 89-chars': string,
+            'No whitespace, > 89-chars': string_no_whitespace,
             '123s': ' '.join(str(i) for i in list(range(52))),
             'Nineteen characters': 19,
             'List': ['A', 'B', 'C'],
@@ -152,11 +162,11 @@ def test_logging_success(LOGGING_FIXTURE: logging.Handler):
     assert len(test_lines) == len(compare_lines)
 
     # Assert test and compare contain the same content
-    #   Skip lines 6, 72, 73, 74 as these contain
+    #   Skip lines 6, 76, 77, 78 as these contain
     #   date-time values that cannot be compared due
     #   to different execution windows.
     for index in range(len(test_lines)):
-        if index not in [6, 72, 73, 74]:
+        if index not in [6, 76, 77, 78]:
             assert test_lines[index] == compare_lines[index]
 
 

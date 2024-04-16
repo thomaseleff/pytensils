@@ -4,7 +4,7 @@
     Generates close-on-exception content for `pytenstils.logging`
         functionality.
     
-        Start time    : 2024-04-15 21:17:42
+        Start time    : 2024-04-16 11:39:29
     
     --------------------------------------------------------------------------
     
@@ -15,8 +15,8 @@
 
     >>> ZeroDivisionError: division by zero
     
-        Filename       : T:\Documents\Projects\Pytensils\tests\test_logging.py
-        Line Number    : Line 322
+        Filename       : T:\Documents\Projects\[...]sils\tests\test_logging.py
+        Line Number    : Line 332
         Function       : divide_by_zero()
         Exception      : ZeroDivisionError
     
@@ -27,8 +27,8 @@
     
     Run-time performance summary.
     
-        Start time    : 21:17:42.466533
-        End time      : 21:17:42.727534
-        Run time      : 00:00:00.261001
+        Start time    : 11:39:29.734161
+        End time      : 11:39:30.008198
+        Run time      : 00:00:00.274037
 
     --------------------------------------------------------------------------
