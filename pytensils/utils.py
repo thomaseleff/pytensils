@@ -12,7 +12,8 @@ Contains utility functions for managing directories and data-types.
 import os
 import ast
 import json
-from typing import Union
+import datetime
+from typing import Union, Literal
 
 
 # Directory management function(s)
@@ -52,8 +53,26 @@ def generate_output_directory(
 # Data-type parsing function(s)
 def as_type(
     value: str,
-    return_dtype: str = 'str'
-) -> Union[str, int, float, bool, list, dict]:
+    return_dtype: Literal[
+        'str',
+        'int',
+        'float',
+        'bool',
+        'list',
+        'dict',
+        'datetime',
+        'timedelta'
+    ] = 'str'
+) -> Union[
+    str,
+    int,
+    float,
+    bool,
+    list,
+    dict,
+    datetime.datetime,
+    datetime.timedelta
+]:
     """ Returns `value` as `return_dtype`.
 
     Parameters
@@ -61,10 +80,10 @@ def as_type(
     value : `str`
         String of the value to convert to `return_dtype`.
     return_dtype : `str`
-        Name of the datatype (`str`, `int`, `float`, `bool`, `list`, `dict`) of
-            the returned value. If the returned value cannot be converted
-            to `return_dtype` then a `TypeError` is raised. If the name of the
-            `return_dtype` is invalid, then a `NameError` is returned.
+        Name of the datatype of the returned value. If the returned value
+            cannot be converted to `return_dtype` then a `TypeError` is
+            raised. If the name of the `return_dtype` is invalid, then
+            a `NameError` is returned.
     """
 
     try:
@@ -92,6 +111,12 @@ def as_type(
                         )
                     ])
                 )
+
+        elif return_dtype.strip().upper() == 'DATETIME':
+            return datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+
+        elif return_dtype.strip().upper() == 'TIMEDELTA':
+            return datetime.timedelta(seconds=float(value))
 
         elif (
             (return_dtype.strip().upper() == 'LIST')
