@@ -13,7 +13,8 @@ import os
 import ast
 import json
 import datetime
-from typing import Union, Literal
+from typing import Union
+from typing_extensions import Literal
 
 
 # Directory management function(s)
