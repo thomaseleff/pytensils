@@ -3,10 +3,6 @@ Information
 ---------------------------------------------------------------------
 Name        : errors.py
 Location    : ~/
-Author      : Tom Eleff
-Published   : 2024-04-15
-Revised on  : .
-
 Description
 ---------------------------------------------------------------------
 Contains the `class` exceptions for all native `pytensils` errors and
