@@ -3,9 +3,6 @@ Information
 ---------------------------------------------------------------------
 Name        : test_logging.py
 Location    : ~/tests
-Author      : Tom Eleff
-Published   : 2024-03-24
-Revised on  : .
 
 Description
 ---------------------------------------------------------------------
