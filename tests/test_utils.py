@@ -3,9 +3,6 @@ Information
 ---------------------------------------------------------------------
 Name        : test_utils.py
 Location    : ~/tests
-Author      : Tom Eleff
-Published   : 2024-03-19
-Revised on  : 2024-03-24
 
 Description
 ---------------------------------------------------------------------
@@ -53,6 +50,17 @@ def test_as_type_success_float():
 
 def test_as_type_success_bool():
     assert utils.as_type(value='True', return_dtype='bool')
+
+
+def test_as_type_success_datetime():
+    assert utils.as_type(
+        value='2024-07-08 18:11:00',
+        return_dtype='datetime'
+    )
+
+
+def test_as_type_success_timedelta():
+    assert utils.as_type(value='3600', return_dtype='timedelta')
 
 
 def test_as_type_success_list():
