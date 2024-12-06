@@ -4,7 +4,8 @@
     Generates example user-log content for all `pytenstils.logging`
         functionality.
     
-        Start time             : 2024-12-06 16:15:48
+        Start time             : 2024-12-06 16:27:04
+
         Extra parameter (1)    : 1
         Extra parameter (2)    : 2
     
@@ -74,8 +75,8 @@
     
     Run-time performance summary.
     
-        Start time    : 16:15:48.736294
-        End time      : 16:15:49.104660
-        Run time      : 00:00:00.368366
+        Start time    : 16:27:04.893262
+        End time      : 16:27:05.165485
+        Run time      : 00:00:00.272223
 
     --------------------------------------------------------------------------
