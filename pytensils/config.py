@@ -226,7 +226,7 @@ class Handler():
 
         Parameters
         ----------
-        dtypes : `dict`
+        dtypes : Union[`dict`, `pytensils.config.Handler`]
             Dictionary object that contains the expected
                 configuration value dtypes.
         """
