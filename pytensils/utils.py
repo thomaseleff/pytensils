@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : utils.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains utility functions for managing directories and data-types.
-"""
+""" Directory and data-type utilities """
 
 import os
 import ast
@@ -55,6 +46,7 @@ def generate_output_directory(
 def as_type(
     value: str,
     return_dtype: Literal[
+        'none',
         'str',
         'int',
         'float',
@@ -88,6 +80,12 @@ def as_type(
     """
 
     try:
+        if (
+            return_dtype.strip().upper() == 'NONE'
+            and not ast.literal_eval(value)
+        ):
+            return None
+
         if return_dtype.strip().upper() == 'STR':
             return str(value)
 

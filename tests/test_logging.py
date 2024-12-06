@@ -10,6 +10,7 @@ Tests methods within `pytensils.logging`.
 """
 
 import os
+from io import StringIO
 import pandas as pd
 import logging as clogging
 import pytest
@@ -228,8 +229,7 @@ def test_write_typeerror():
         )
 
 
-def test_debug_console(caplog: pytest.LogCaptureFixture):
-    caplog.set_level(clogging.DEBUG)
+def test_debug_console():
 
     # Initialize logging
     Logging = logging.Handler(
@@ -241,19 +241,51 @@ def test_debug_console(caplog: pytest.LogCaptureFixture):
         debug_console=True
     )
 
-    # Create debug console output
-    Logging.write(content='Log-content-for-the-output-console')
-
-    # Cleanup
-    os.remove(
-        os.path.join(
-            os.path.dirname(__file__),
-            'resources',
-            'python.log'
-        )
+    # Ensure that a StreamHandler is attached
+    handler = next(
+        (
+            h for h in logging.pytensils.handlers if isinstance(
+                h,
+                clogging.StreamHandler
+            )
+        ),
+        None
     )
+    assert handler is not None
 
-    assert 'Log-content-for-the-output-console' in caplog.text
+    # Replace the StreamHandler with StringIO
+    log_output = StringIO()
+    original_stream = handler.stream
+    handler.setStream(log_output)
+
+    try:
+
+        # Loging
+        test_message = "Log-content-for-the-output-console"
+        Logging.write(test_message)
+
+        # Flush the handler and retrieve the log output
+        handler.flush()
+        log_output.seek(0)
+        captured_logs = log_output.read()
+
+        # Ensure the log message is present in the captured output
+        assert test_message in captured_logs
+        assert "DEBUG" in captured_logs
+
+    finally:
+
+        # Restore the StreamHandler
+        handler.setStream(original_stream)
+
+        # Cleanup
+        os.remove(
+            os.path.join(
+                os.path.dirname(__file__),
+                'resources',
+                'python.log'
+            )
+        )
 
 
 def test_pretty_dict_valueerror():

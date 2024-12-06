@@ -3,7 +3,7 @@
 __pycache__
 /archive
 .vscode
-.pytensils
+.venv
 .pytest_cache
 .coverage
 testing.py

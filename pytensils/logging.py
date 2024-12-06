@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : logging.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains the `class` methods for 'pretty' user-logging.
-"""
+""" Pretty user-logging """
 
 import os
 import textwrap
@@ -31,16 +22,45 @@ _MAX_DEPTH = 1
 # Setup CPython logging
 pytensils = logging.getLogger('pytensils')
 pytensils.setLevel(level=logging.DEBUG)
+
+# Prevent propagation to the root logger to avoid duplicate messages
+pytensils.propagate = False
+
+# Setup a CPython logging stream handler
 debugger = logging.StreamHandler()
 debugger.setLevel(level=logging.DEBUG)
 debugger.setFormatter(fmt=logging.Formatter('[DEBUG] %(message)s'))
-pytensils.addHandler(hdlr=debugger)
+
+# Add the handler if it does not currently exist
+if not any(isinstance(h, logging.StreamHandler) for h in pytensils.handlers):
+    pytensils.addHandler(hdlr=debugger)
 
 # Setup tabulate
 tabulate.PRESERVE_WHITESPACE = True
 
 
 class Handler():
+    """ A `class` that represents a logging-handler.
+
+    Parameters
+    ----------
+    path : `str`
+        Directory path to the folder that contains the `file_name` of the
+            log-file.
+    file_name : `str`
+        File name of the log-file.
+    description : `str`
+        Information about the executed Python job run.
+    metadata : `dict`
+        Environment parameters to display as metadata about the executed
+            Python job run.
+    create: `bool`
+        `True` or `False`, creates an empty log-file, `file_name`
+            within `path` when `True`.
+    debug_console: `bool`
+        `True` or `False`, outputs the logging content to the console
+            output when `True` using `logging.debug()`.
+    """
 
     def __init__(
         self,
@@ -51,7 +71,7 @@ class Handler():
         create: bool = True,
         debug_console: bool = False
     ):
-        """ Initializes an instance of the logger-handler class.
+        """ Initializes an instance of the logging-handler class.
 
         Parameters
         ----------

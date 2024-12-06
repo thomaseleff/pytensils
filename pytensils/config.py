@@ -1,14 +1,6 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : config.py
-Location    : ~/
+""" Configuration management """
 
-Description
----------------------------------------------------------------------
-Contains the `class` methods for managing configuration.
-"""
-
+from __future__ import annotations
 import os
 import json
 import copy
@@ -21,6 +13,23 @@ _MIN_DEPTH = 2
 
 
 class Handler():
+    """ A `class` that represents a configuration-handler.
+
+    Parameters
+    ----------
+    path : `str`
+        Directory path to the folder that contains the `file_name` of the
+            '.json' config-file.
+    file_name : `str`
+        File name of the '.json' config-file.
+    create: `bool`
+        `True` or `False`, creates an empty log-file, `file_name`
+            within `path` when `True`.
+    Logging: `pytensils.logging.Handler`
+        An instance of the `pytensils.logging.Handler` class that allows
+            for native 'pretty' user-logging of all `ValidationError`
+            exceptions.
+    """
 
     def __init__(
         self,
@@ -123,7 +132,8 @@ class Handler():
                     )
 
     def read(self) -> dict:
-        """ Reads a '.json' config-file and returns the content as a `dict`.
+        """ Reads a '.json' config-file, updates the config data
+        and returns the content as a `dict`.
         """
         with open(
             os.path.join(
@@ -164,6 +174,9 @@ class Handler():
                     )
                 )
 
+                # Update the config data
+                self.data = copy.deepcopy(dict_object)
+
                 return dict_object
 
             except json.decoder.JSONDecodeError:
@@ -201,8 +214,7 @@ class Handler():
                     )
 
     def write(self):
-        """ Writes a '.json' config-file.
-        """
+        """ Writes a '.json' config-file. """
         with open(
             os.path.join(
                 self.path,
@@ -218,17 +230,27 @@ class Handler():
 
     def validate(
         self,
-        dtypes: dict
+        dtypes: Union[dict, Handler],
     ) -> bool:
         """ Validates the config-file data against the dtypes in `dtypes`.
         Returns `True` when validation completes successfully.
 
         Parameters
         ----------
-        dtypes : `dict`
+        dtypes : Union[`dict`, `pytensils.config.Handler`]
             Dictionary object that contains the expected
                 configuration value dtypes.
         """
+        assert type(dtypes) in [dict, Handler], (
+            ''.join([
+                '{dtypes} must be either a `dict` or an instance of',
+                ' `pytensils.config.Handler`.'
+            ])
+        )
+
+        # Parse the config data as a dictionary
+        if isinstance(dtypes, Handler):
+            dtypes = dtypes.to_dict()
 
         # Validate instance
         self._validate_instance(dict_object=dtypes, parameter='dtypes')
@@ -251,8 +273,7 @@ class Handler():
         return True
 
     def to_dict(self) -> dict:
-        """ Returns a dictionary object of the config-file data.
-        """
+        """ Returns a dictionary object of the config-file data. """
         return copy.deepcopy(self.data)
 
     def from_dict(

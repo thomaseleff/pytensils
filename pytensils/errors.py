@@ -1,16 +1,8 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : errors.py
-Location    : ~/
-Description
----------------------------------------------------------------------
-Contains the `class` exceptions for all native `pytensils` errors and
-all error accessor functions.
-"""
+""" errors """
 
 
 class config:
+    """ A `class` that contains all config-related errors. """
 
     # Exceptions
     class OSError(OSError):

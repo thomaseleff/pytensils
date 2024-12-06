@@ -1,3 +1,10 @@
+""" pytensils
+
+A Python package that provides general utility functions for managing
+configuration, user-logging, directories and data-types as well as
+a basic run-time profiler.
+"""
+
 import pytensils.config as config
 import pytensils.logging as logging
 import pytensils.utils as utils
