@@ -124,7 +124,8 @@ class Handler():
                     )
 
     def read(self) -> dict:
-        """ Reads a '.json' config-file and returns the content as a `dict`.
+        """ Reads a '.json' config-file, updates the config data
+        and returns the content as a `dict`.
         """
         with open(
             os.path.join(
@@ -164,6 +165,9 @@ class Handler():
                         self.file_name
                     )
                 )
+
+                # Update the config data
+                self.data = copy.deepcopy(dict_object)
 
                 return dict_object
 
