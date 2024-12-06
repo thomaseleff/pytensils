@@ -31,10 +31,18 @@ _MAX_DEPTH = 1
 # Setup CPython logging
 pytensils = logging.getLogger('pytensils')
 pytensils.setLevel(level=logging.DEBUG)
+
+# Prevent propagation to the root logger to avoid duplicate messages
+pytensils.propagate = False
+
+# Setup a CPython logging stream handler
 debugger = logging.StreamHandler()
 debugger.setLevel(level=logging.DEBUG)
 debugger.setFormatter(fmt=logging.Formatter('[DEBUG] %(message)s'))
-pytensils.addHandler(hdlr=debugger)
+
+# Add the handler if it does not currently exist
+if not any(isinstance(h, logging.StreamHandler) for h in pytensils.handlers):
+    pytensils.addHandler(hdlr=debugger)
 
 # Setup tabulate
 tabulate.PRESERVE_WHITESPACE = True
