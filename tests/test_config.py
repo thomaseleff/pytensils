@@ -202,7 +202,7 @@ def test_from_dict_success(
     }
 
 
-def test_validate_success(
+def test_validate_from_dict_success(
     CONFIG_FIXTURE: config.Handler,
     DTYPES_FIXTURE: config.Handler
 ):
@@ -210,6 +210,25 @@ def test_validate_success(
         dtypes=DTYPES_FIXTURE.to_dict()
     )
     assert not CONFIG_FIXTURE.validation_errors
+
+
+def test_validate_from_config_handler_success(
+    CONFIG_FIXTURE: config.Handler,
+    DTYPES_FIXTURE: config.Handler
+):
+    assert CONFIG_FIXTURE.validate(
+        dtypes=DTYPES_FIXTURE
+    )
+    assert not CONFIG_FIXTURE.validation_errors
+
+
+def test_validate_assertionerror(
+    CONFIG_FIXTURE: config.Handler
+):
+    with pytest.raises(AssertionError):
+        CONFIG_FIXTURE.validate(
+            dtypes='invalid-type'
+        )
 
 
 def test_validate_instance_validationerror(CONFIG_FIXTURE: config.Handler):
