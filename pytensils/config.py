@@ -1,5 +1,6 @@
 """ Configuration management """
 
+from __future__ import annotations
 import os
 import json
 import copy
@@ -131,7 +132,8 @@ class Handler():
                     )
 
     def read(self) -> dict:
-        """ Reads a '.json' config-file and returns the content as a `dict`.
+        """ Reads a '.json' config-file, updates the config data
+        and returns the content as a `dict`.
         """
         with open(
             os.path.join(
@@ -171,6 +173,9 @@ class Handler():
                         self.file_name
                     )
                 )
+
+                # Update the config data
+                self.data = copy.deepcopy(dict_object)
 
                 return dict_object
 
@@ -225,17 +230,27 @@ class Handler():
 
     def validate(
         self,
-        dtypes: dict
+        dtypes: Union[dict, Handler],
     ) -> bool:
         """ Validates the config-file data against the dtypes in `dtypes`.
         Returns `True` when validation completes successfully.
 
         Parameters
         ----------
-        dtypes : `dict`
+        dtypes : Union[`dict`, `pytensils.config.Handler`]
             Dictionary object that contains the expected
                 configuration value dtypes.
         """
+        assert type(dtypes) in [dict, Handler], (
+            ''.join([
+                '{dtypes} must be either a `dict` or an instance of',
+                ' `pytensils.config.Handler`.'
+            ])
+        )
+
+        # Parse the config data as a dictionary
+        if isinstance(dtypes, Handler):
+            dtypes = dtypes.to_dict()
 
         # Validate instance
         self._validate_instance(dict_object=dtypes, parameter='dtypes')
