@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : utils.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains utility functions for managing directories and data-types.
-"""
+""" Directory and data-type utilities """
 
 import os
 import ast

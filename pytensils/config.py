@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : config.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains the `class` methods for managing configuration.
-"""
+""" Configuration management """
 
 import os
 import json
@@ -21,6 +12,23 @@ _MIN_DEPTH = 2
 
 
 class Handler():
+    """ A `class` that represents a configuration-handler.
+
+    Parameters
+    ----------
+    path : `str`
+        Directory path to the folder that contains the `file_name` of the
+            '.json' config-file.
+    file_name : `str`
+        File name of the '.json' config-file.
+    create: `bool`
+        `True` or `False`, creates an empty log-file, `file_name`
+            within `path` when `True`.
+    Logging: `pytensils.logging.Handler`
+        An instance of the `pytensils.logging.Handler` class that allows
+            for native 'pretty' user-logging of all `ValidationError`
+            exceptions.
+    """
 
     def __init__(
         self,
@@ -201,8 +209,7 @@ class Handler():
                     )
 
     def write(self):
-        """ Writes a '.json' config-file.
-        """
+        """ Writes a '.json' config-file. """
         with open(
             os.path.join(
                 self.path,
@@ -251,8 +258,7 @@ class Handler():
         return True
 
     def to_dict(self) -> dict:
-        """ Returns a dictionary object of the config-file data.
-        """
+        """ Returns a dictionary object of the config-file data. """
         return copy.deepcopy(self.data)
 
     def from_dict(

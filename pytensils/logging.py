@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : logging.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains the `class` methods for 'pretty' user-logging.
-"""
+""" Pretty user-logging """
 
 import os
 import textwrap
@@ -49,6 +40,27 @@ tabulate.PRESERVE_WHITESPACE = True
 
 
 class Handler():
+    """ A `class` that represents a logging-handler.
+
+    Parameters
+    ----------
+    path : `str`
+        Directory path to the folder that contains the `file_name` of the
+            log-file.
+    file_name : `str`
+        File name of the log-file.
+    description : `str`
+        Information about the executed Python job run.
+    metadata : `dict`
+        Environment parameters to display as metadata about the executed
+            Python job run.
+    create: `bool`
+        `True` or `False`, creates an empty log-file, `file_name`
+            within `path` when `True`.
+    debug_console: `bool`
+        `True` or `False`, outputs the logging content to the console
+            output when `True` using `logging.debug()`.
+    """
 
     def __init__(
         self,
@@ -59,7 +71,7 @@ class Handler():
         create: bool = True,
         debug_console: bool = False
     ):
-        """ Initializes an instance of the logger-handler class.
+        """ Initializes an instance of the logging-handler class.
 
         Parameters
         ----------

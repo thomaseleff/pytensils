@@ -1,13 +1,4 @@
-"""
-Information
----------------------------------------------------------------------
-Name        : profiler.py
-Location    : ~/
-
-Description
----------------------------------------------------------------------
-Contains utility functions for profiling functions.
-"""
+""" Run-time profiling """
 
 import time
 import datetime as dt
@@ -31,7 +22,7 @@ def run_time(
         result = func(*args, **kwargs)
         t2 = time.time()
         td = dt.timedelta(seconds=(t2-t1))
-        print("\n[INFO] Function {%s()} executed in %s hh:mm:ss" % (
+        print("\n[INFO] Function {%s()} executed in %s hh:mm:ss." % (
                 func.__name__,
                 td
             )
