@@ -262,7 +262,7 @@ def test_debug_console():
 
         # Loging
         test_message = "Log-content-for-the-output-console"
-        Logging.write('Log-content-for-the-output-console')
+        Logging.write(test_message)
 
         # Flush the handler and retrieve the log output
         handler.flush()
