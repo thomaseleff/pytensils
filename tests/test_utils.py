@@ -36,6 +36,10 @@ def test_generate_output_directory_oserror():
         )
 
 
+def test_as_type_success_none():
+    assert not utils.as_type(value='None', return_dtype='none')
+
+
 def test_as_type_success_str():
     assert utils.as_type(value='ABC') == 'ABC'
 
